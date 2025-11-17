@@ -158,7 +158,8 @@ This is a common issue on Render. We've created a custom build script to fix thi
 
 **Solution 1: Use the Custom Build Script (Already Applied)**
 - The build script now uses `node scripts/build.js` which directly imports `react-scripts/scripts/build`
-- This bypasses Linux executable permission issues and should work automatically
+- It also polyfills `localStorage`/`sessionStorage`, preventing the Node 20+ `SecurityError: Cannot initialize local storage` issue during builds
+- This should work automatically on Render
 
 **Solution 2: Override Build Command in Render Dashboard (If Solution 1 fails):**
 1. Go to your Static Site settings in Render
