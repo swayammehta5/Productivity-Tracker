@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 const cron = require('node-cron');
 
@@ -41,7 +42,7 @@ const app = express();
 // 🔹 Middleware
 // ===========================
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
@@ -74,9 +75,15 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/2fa', twoFactorRoutes);
 app.use('/api/location', locationRoutes);
 
-// Health check
+// Health check (works even if MongoDB is not connected)
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'API is running' });
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  res.json({ 
+    status: 'ok', 
+    message: 'API is running',
+    database: dbStatus,
+    timestamp: new Date().toISOString()
+  });
 });
 
 
@@ -188,14 +195,21 @@ app.use((req, res) => {
 // ===========================
 const startServer = async () => {
   try {
-    await connectDB();
-    console.log('✅ MongoDB connected successfully');
-
+    // Start server first so Render can detect the port
     const PORT = parseInt(process.env.PORT, 10) || 5001;
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-      console.log(`🌐 API available at http://localhost:${PORT}/api`);
+      console.log(`🌐 API available at http://0.0.0.0:${PORT}/api`);
     });
+
+    // Connect to MongoDB after server starts (non-blocking)
+    try {
+      await connectDB();
+    } catch (dbError) {
+      console.error('⚠️  Server started but MongoDB connection failed.');
+      console.error('⚠️  API endpoints will not work until MongoDB is connected.');
+      console.error('⚠️  Please check your MONGODB_URI environment variable in Render.');
+    }
 
     // Graceful shutdown
     process.on('SIGTERM', () => {

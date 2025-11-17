@@ -19,7 +19,7 @@
   "proxy": "http://localhost:5001",
   "scripts": {
     "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false INLINE_RUNTIME_CHUNK=false react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false INLINE_RUNTIME_CHUNK=false npx react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -39,5 +39,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }
