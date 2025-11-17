@@ -6,7 +6,7 @@ const HabitsList = () => {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
-  const [filter, setFilter] = useState('all'); // all, active, archived
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     loadHabits();
@@ -69,9 +69,7 @@ const HabitsList = () => {
           + Add New Habit
         </Link>
       </div>
-
-      {/* Filter Tabs */}
-      <div className="mb-6 flex space-x-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 font-medium transition ${
@@ -162,7 +160,7 @@ const HabitsList = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-8">
+                    <div className="flex flex-wrap gap-6">
                       <div>
                         <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                           {habit.currentStreak}
@@ -185,12 +183,6 @@ const HabitsList = () => {
                   </div>
 
                   <div className="flex flex-col space-y-2 ml-4">
-                    <Link
-                      to={`/habits/${habit._id}`}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition duration-200 text-center"
-                    >
-                      View Details
-                    </Link>
                     <button
                       onClick={() => setDeleteConfirm(habit._id)}
                       className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition duration-200"

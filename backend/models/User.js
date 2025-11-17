@@ -28,6 +28,48 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  profilePicture: {
+    type: String,
+    default: ''
+  },
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: {
+    type: String,
+    default: ''
+  },
+  googleCalendarTokens: {
+    accessToken: String,
+    refreshToken: String,
+    expiryDate: Date
+  },
+  notificationPreferences: {
+    browserNotifications: {
+      type: Boolean,
+      default: true
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    reminderTime: {
+      type: String,
+      default: '09:00'
+    }
+  },
+  locationPreferences: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    homeLocation: {
+      latitude: Number,
+      longitude: Number,
+      address: String
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now

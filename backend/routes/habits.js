@@ -1,10 +1,10 @@
 const express = require('express');
 const Habit = require('../models/Habit');
 const auth = require('../middleware/auth');
+const UserScore = require('../models/UserScore');
 
 const router = express.Router();
 
-// Get all habits for user
 router.get('/', auth, async (req, res) => {
   try {
     const habits = await Habit.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -16,7 +16,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Create new habit
 router.post('/', auth, async (req, res) => {
   try {
     const { name, description, frequency, goal, color } = req.body;
@@ -37,30 +36,6 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// Update habit
-router.put('/:id', auth, async (req, res) => {
-  try {
-    const habit = await Habit.findOne({ _id: req.params.id, user: req.user._id });
-    
-    if (!habit) {
-      return res.status(404).json({ message: 'Habit not found' });
-    }
-
-    const { name, description, frequency, goal, color } = req.body;
-    if (name) habit.name = name;
-    if (description !== undefined) habit.description = description;
-    if (frequency) habit.frequency = frequency;
-    if (goal) habit.goal = goal;
-    if (color) habit.color = color;
-
-    await habit.save();
-    res.json(habit);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
-
-// Delete habit
 router.delete('/:id', auth, async (req, res) => {
   try {
     const habit = await Habit.findOneAndDelete({ _id: req.params.id, user: req.user._id });
@@ -75,7 +50,6 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// Mark habit as complete for a date
 router.post('/:id/complete', auth, async (req, res) => {
   try {
     const { date } = req.body;
@@ -103,13 +77,30 @@ router.post('/:id/complete', auth, async (req, res) => {
     habit.calculateStreak();
     await habit.save();
 
+    // Award XP for completing habit
+    try {
+      let userScore = await UserScore.findOne({ user: req.user._id });
+      if (!userScore) {
+        userScore = new UserScore({ user: req.user._id });
+      }
+      await userScore.addXP(10); // 10 XP per habit completion
+      userScore.totalHabitsCompleted += 1;
+      
+      // Update longest streak
+      if (habit.longestStreak > userScore.longestStreak) {
+        userScore.longestStreak = habit.longestStreak;
+      }
+      await userScore.save();
+    } catch (error) {
+      console.error('Error awarding XP:', error);
+    }
+
     res.json(habit);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// Mark habit as incomplete for a date
 router.post('/:id/uncomplete', auth, async (req, res) => {
   try {
     const { date } = req.body;
@@ -137,7 +128,6 @@ router.post('/:id/uncomplete', auth, async (req, res) => {
   }
 });
 
-// Get habit statistics
 router.get('/stats', auth, async (req, res) => {
   try {
     const habits = await Habit.find({ user: req.user._id });

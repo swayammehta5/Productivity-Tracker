@@ -17,7 +17,7 @@ const habitSchema = new mongoose.Schema({
   },
   frequency: {
     type: String,
-    enum: ['daily', 'weekly', 'custom'],
+    enum: ['daily', 'weekly' ],
     default: 'daily'
   },
   goal: {
@@ -27,6 +27,19 @@ const habitSchema = new mongoose.Schema({
   color: {
     type: String,
     default: '#3B82F6'
+  },
+  location: {
+    latitude: Number,
+    longitude: Number,
+    address: String,
+    radius: {
+      type: Number,
+      default: 100
+    }
+  },
+  reminderTime: {
+    type: String,
+    default: '09:00'
   },
   completions: [{
     date: {

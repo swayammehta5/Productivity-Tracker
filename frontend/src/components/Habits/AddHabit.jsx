@@ -98,7 +98,6 @@ const AddHabit = () => {
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
-                <option value="custom">Custom</option>
               </select>
             </div>
 
@@ -142,7 +141,7 @@ const AddHabit = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 disabled:opacity-50 "
             >
               {loading ? 'Creating...' : 'Create Habit'}
             </button>

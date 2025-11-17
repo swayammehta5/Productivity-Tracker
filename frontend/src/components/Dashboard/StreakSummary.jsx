@@ -4,10 +4,10 @@ const StreakSummary = ({ stats, completedToday, totalToday }) => {
   const completionRate = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
 
   const statCards = [
-    { label: 'Total Habits', value: stats.totalHabits, icon: '🎯', color: 'blue' },
+    { label: 'Total Habits', value: stats?.habits?.total || 0, icon: '🎯', color: 'blue' },
     { label: 'Completed Today', value: `${completedToday}/${totalToday}`, icon: '✅', color: 'green' },
-    { label: 'Average Streak', value: stats.averageStreak, icon: '🔥', color: 'orange' },
-    { label: 'Longest Streak', value: stats.longestStreak, icon: '🏆', color: 'yellow' }
+    { label: 'Average Streak', value: stats?.habits?.averageStreak || 0, icon: '🔥', color: 'orange' },
+    { label: 'Longest Streak', value: stats?.habits?.longestStreak || 0, icon: '🏆', color: 'yellow' }
   ];
 
   const colorClasses = {
