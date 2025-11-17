@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext_fixed';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: '', otp: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [requires2FA, setRequires2FA] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -15,8 +16,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(formData.email, formData.password);
-      navigate('/');
+      const result = await login(formData.email, formData.password, formData.otp);
+      if (result && result.requires2FA) {
+        setRequires2FA(true);
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to login');
     } finally {
@@ -69,6 +74,26 @@ const Login = () => {
                 placeholder="••••••••"
               />
             </div>
+
+            {requires2FA && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Two-Factor Authentication Code
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.otp}
+                  onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                  placeholder="Enter 6-digit code"
+                  maxLength="6"
+                />
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  Enter the code from your authenticator app
+                </p>
+              </div>
+            )}
 
             <button
               type="submit"

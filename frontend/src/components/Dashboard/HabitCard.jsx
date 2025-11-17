@@ -21,7 +21,7 @@ const HabitCard = ({ habit, onToggle }) => {
         </div>
 
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 flex-wrap gap-y-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {habit.currentStreak}
