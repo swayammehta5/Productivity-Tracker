@@ -1,21 +1,17 @@
 services:
   - type: web
-    name: habit-tracker-backend
+    name: productivity-tracker-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/build
+    routes:
+      - path: /
+        destination: /index.html
+  - type: web
+    name: productivity-tracker-backend
     env: node
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
-      # Add other environment variables in Render dashboard
-
-  - type: web
-    name: habit-tracker-frontend
-    env: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./build
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://habit-tracker-backend.onrender.com/api
-        # Update with your actual backend URL
-
