@@ -154,29 +154,33 @@ This error means the `MONGODB_URI` environment variable is either:
 
 ### Frontend Build Error: "react-scripts: Permission denied"
 
-If you encounter this error on Render, the fix has been applied to `package.json`. The build script now uses `npx react-scripts build` instead of `react-scripts build`.
+This is a common issue on Render. We've created a custom build script to fix this.
 
-**Alternative Solutions if the issue persists:**
+**Solution 1: Use the Custom Build Script (Already Applied)**
+- The build script now uses `node scripts/build.js` which uses `npm exec` to run react-scripts
+- This should work automatically
 
-1. **Override Build Command in Render Dashboard:**
-   - Go to your Static Site settings in Render
-   - Under "Build Command", set: `npm install && npx react-scripts build`
-   - Under "Publish Directory", set: `build`
+**Solution 2: Override Build Command in Render Dashboard (If Solution 1 fails):**
+1. Go to your Static Site settings in Render
+2. Under "Build Command", set: `npm install && npm run build`
+3. Under "Publish Directory", set: `build`
+4. Make sure "Node Version" is set to 18.x or 20.x
 
-2. **Ensure Node Version:**
-   - Render should use Node.js 18.x or 20.x
-   - You can specify in `package.json`:
-   ```json
-   "engines": {
-     "node": ">=18.0.0"
-   }
-   ```
+**Solution 3: Use npm exec directly (Alternative):**
+If the custom script doesn't work, override the build command in Render to:
+```bash
+npm install && npm exec -- react-scripts build
+```
 
-3. **Clean Build:**
-   - If issues persist, try adding a prebuild script:
-   ```json
-   "prebuild": "rm -rf build node_modules/.cache"
-   ```
+**Solution 4: Ensure Node Version:**
+- Render should use Node.js 18.x or 20.x
+- The `package.json` already specifies this in the `engines` field
+
+**Solution 5: Clean Build (If issues persist):**
+Add this to your build command in Render:
+```bash
+npm install && rm -rf build node_modules/.cache && npm run build
+```
 
 ---
 
