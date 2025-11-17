@@ -1,22 +1,24 @@
 #!/usr/bin/env node
 
-// Custom build script to avoid permission issues
+/**
+ * Custom build script that directly imports the react-scripts build entrypoint.
+ * This avoids shell execution so Linux executable bits are no longer required.
+ */
+
 process.env.GENERATE_SOURCEMAP = 'false';
 process.env.INLINE_RUNTIME_CHUNK = 'false';
 
-const { execSync } = require('child_process');
-const path = require('path');
+try {
+  require.resolve('react-scripts/scripts/build');
+} catch (err) {
+  console.error('react-scripts is not installed. Did npm install fail?', err);
+  process.exit(1);
+}
 
 try {
-  // Use npm to run react-scripts, which handles path resolution correctly
-  const result = execSync('npm exec -- react-scripts build', {
-    stdio: 'inherit',
-    cwd: path.join(__dirname, '..'),
-    env: { ...process.env }
-  });
-  process.exit(0);
+  require('react-scripts/scripts/build');
 } catch (error) {
-  console.error('Build failed:', error.message);
-  process.exit(error.status || 1);
+  console.error('Build failed:', error);
+  process.exit(1);
 }
 
