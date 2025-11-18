@@ -153,6 +153,18 @@ router.put('/profile', auth, async (req, res) => {
 router.post('/google', async (req, res) => {
   try {
     console.log('🔍 /api/auth/google: Request received');
+    
+    // Check MongoDB connection first
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      console.error('🔍 /api/auth/google: MongoDB not connected! State:', mongoose.connection.readyState);
+      return res.status(503).json({ 
+        message: 'Database not available. Please check MongoDB connection.',
+        databaseStatus: 'disconnected'
+      });
+    }
+    console.log('🔍 /api/auth/google: MongoDB connection verified ✓');
+
     const { tokenId } = req.body;
 
     if (!tokenId) {
@@ -206,15 +218,24 @@ router.post('/google', async (req, res) => {
     });
 
     if (user) {
-      console.log('🔍 /api/auth/google: User found, updating if needed');
+      console.log('🔍 /api/auth/google: User found (ID:', user._id, 'Email:', user.email, ')');
       // Update Google ID if user exists but doesn't have it
       if (!user.googleId) {
+        console.log('🔍 /api/auth/google: Linking Google account to existing user');
         user.googleId = googleId;
         if (picture) user.profilePicture = picture;
-        await user.save();
+        try {
+          await user.save();
+          console.log('🔍 /api/auth/google: User updated successfully ✓');
+        } catch (saveError) {
+          console.error('🔍 /api/auth/google: Failed to save user update:', saveError.message);
+          throw saveError;
+        }
+      } else {
+        console.log('🔍 /api/auth/google: User already has Google ID linked');
       }
     } else {
-      console.log('🔍 /api/auth/google: Creating new user');
+      console.log('🔍 /api/auth/google: Creating new user with:', { name, email, googleId: googleId?.substring(0, 20) + '...' });
       // Create new user
       user = new User({
         name: name,
@@ -223,8 +244,25 @@ router.post('/google', async (req, res) => {
         profilePicture: picture || '',
         password: undefined // No password for Google OAuth users
       });
-      await user.save();
-      console.log('🔍 /api/auth/google: New user created:', user._id);
+      try {
+        await user.save();
+        console.log('🔍 /api/auth/google: ✅ New user created and saved to DB! ID:', user._id);
+        console.log('🔍 /api/auth/google: User data:', {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          googleId: user.googleId ? 'Set' : 'Not set',
+          hasProfilePicture: !!user.profilePicture
+        });
+      } catch (saveError) {
+        console.error('🔍 /api/auth/google: ❌ Failed to save new user to DB:', saveError.message);
+        console.error('🔍 /api/auth/google: Save error details:', {
+          code: saveError.code,
+          name: saveError.name,
+          errors: saveError.errors
+        });
+        throw saveError;
+      }
     }
 
     // Generate JWT token
@@ -252,6 +290,19 @@ router.post('/google', async (req, res) => {
       error: error.message,
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
+  }
+});
+
+// Debug endpoint to check if Google users are in DB (remove in production)
+router.get('/google-users', auth, async (req, res) => {
+  try {
+    const users = await User.find({ googleId: { $ne: null } }).select('name email googleId createdAt');
+    res.json({
+      count: users.length,
+      users: users
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
   }
 });
 
