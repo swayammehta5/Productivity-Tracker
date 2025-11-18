@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useAuth } from './AuthContext_fixed';
+import { useAuth } from './AuthContext';
 
 const ThemeContext = createContext();
 
