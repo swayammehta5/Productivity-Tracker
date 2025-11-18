@@ -152,28 +152,50 @@ router.put('/profile', auth, async (req, res) => {
 // Google OAuth route
 router.post('/google', async (req, res) => {
   try {
+    console.log('🔍 /api/auth/google: Request received');
     const { tokenId } = req.body;
 
     if (!tokenId) {
+      console.error('🔍 /api/auth/google: No tokenId provided');
       return res.status(400).json({ message: 'Google token is required' });
     }
 
-    // Verify Google token (you'll need to install google-auth-library)
+    console.log('🔍 /api/auth/google: TokenId received, length:', tokenId?.length);
+    console.log('🔍 /api/auth/google: GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'Set' : 'NOT SET');
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      console.error('🔍 /api/auth/google: GOOGLE_CLIENT_ID not configured');
+      return res.status(500).json({ message: 'Google OAuth not configured on server' });
+    }
+
+    // Verify Google token
     const { OAuth2Client } = require('google-auth-library');
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
     let ticket;
     try {
+      console.log('🔍 /api/auth/google: Verifying token with Google...');
       ticket = await client.verifyIdToken({
         idToken: tokenId,
         audience: process.env.GOOGLE_CLIENT_ID
       });
+      console.log('🔍 /api/auth/google: Token verified successfully');
     } catch (error) {
-      return res.status(400).json({ message: 'Invalid Google token' });
+      console.error('🔍 /api/auth/google: Token verification failed:', error.message);
+      return res.status(400).json({ message: 'Invalid Google token', details: error.message });
     }
 
     const payload = ticket.getPayload();
-    const { sub: googleId, email, name, picture } = payload;
+    const googleId = payload.sub; // 'sub' is the Google user ID
+    const email = payload.email;
+    const name = payload.name;
+    const picture = payload.picture;
+
+    console.log('🔍 /api/auth/google: Token payload extracted:', { 
+      googleId: googleId?.substring(0, 20) + '...', 
+      email, 
+      name 
+    });
 
     // Check if user exists by Google ID or email
     let user = await User.findOne({ 
@@ -184,6 +206,7 @@ router.post('/google', async (req, res) => {
     });
 
     if (user) {
+      console.log('🔍 /api/auth/google: User found, updating if needed');
       // Update Google ID if user exists but doesn't have it
       if (!user.googleId) {
         user.googleId = googleId;
@@ -191,6 +214,7 @@ router.post('/google', async (req, res) => {
         await user.save();
       }
     } else {
+      console.log('🔍 /api/auth/google: Creating new user');
       // Create new user
       user = new User({
         name: name,
@@ -200,12 +224,15 @@ router.post('/google', async (req, res) => {
         password: undefined // No password for Google OAuth users
       });
       await user.save();
+      console.log('🔍 /api/auth/google: New user created:', user._id);
     }
 
     // Generate JWT token
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d'
     });
+
+    console.log('🔍 /api/auth/google: JWT token generated, sending response');
 
     res.json({
       token,
@@ -218,8 +245,13 @@ router.post('/google', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Google OAuth error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('🔍 /api/auth/google: Error:', error);
+    console.error('🔍 /api/auth/google: Error stack:', error.stack);
+    res.status(500).json({ 
+      message: 'Server error', 
+      error: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
