@@ -148,4 +148,79 @@ router.put('/profile', auth, async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+// Google OAuth route
+router.post('/google', async (req, res) => {
+  try {
+    const { tokenId } = req.body;
+
+    if (!tokenId) {
+      return res.status(400).json({ message: 'Google token is required' });
+    }
+
+    // Verify Google token (you'll need to install google-auth-library)
+    const { OAuth2Client } = require('google-auth-library');
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: tokenId,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
+    } catch (error) {
+      return res.status(400).json({ message: 'Invalid Google token' });
+    }
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Check if user exists by Google ID or email
+    let user = await User.findOne({ 
+      $or: [
+        { googleId: googleId },
+        { email: email }
+      ]
+    });
+
+    if (user) {
+      // Update Google ID if user exists but doesn't have it
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (picture) user.profilePicture = picture;
+        await user.save();
+      }
+    } else {
+      // Create new user
+      user = new User({
+        name: name,
+        email: email,
+        googleId: googleId,
+        profilePicture: picture || '',
+        password: undefined // No password for Google OAuth users
+      });
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        theme: user.theme,
+        profilePicture: user.profilePicture
+      }
+    });
+  } catch (error) {
+    console.error('Google OAuth error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 module.exports = router;

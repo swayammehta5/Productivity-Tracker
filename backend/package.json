@@ -19,6 +19,7 @@
     "nodemailer": "^6.9.4",
     "openai": "^4.20.0",
     "googleapis": "^126.0.0",
+    "google-auth-library": "^9.0.0",
     "otplib": "^12.0.1",
     "qrcode": "^1.5.3"
   },

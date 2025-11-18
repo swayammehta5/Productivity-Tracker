@@ -56,17 +56,18 @@ Add these environment variables in your Render backend service:
    - **Required**: No (app will use rule-based suggestions if not provided)
 
 10. **GOOGLE_CLIENT_ID**
-    - Description: Google OAuth Client ID for Google Calendar integration
+    - Description: Google OAuth Client ID for Google Authentication and Calendar integration
     - Example: `123456789-abcdefg.apps.googleusercontent.com`
-    - **Required**: No (only if using Google Calendar sync)
+    - **Required**: Yes (for Google OAuth login)
+    - **Note**: Get this from Google Cloud Console (see GOOGLE_OAUTH_SETUP.md)
 
 11. **GOOGLE_CLIENT_SECRET**
-    - Description: Google OAuth Client Secret for Google Calendar integration
+    - Description: Google OAuth Client Secret (optional, not needed for basic OAuth)
     - Example: `GOCSPX-...`
-    - **Required**: No (only if using Google Calendar sync)
+    - **Required**: No (only if using advanced Google Calendar sync features)
 
 12. **GOOGLE_REDIRECT_URI**
-    - Description: Google OAuth redirect URI
+    - Description: Google OAuth redirect URI for Calendar integration
     - Example: `https://your-backend.onrender.com/api/calendar/callback`
     - **Required**: No (only if using Google Calendar sync)
 
@@ -83,6 +84,12 @@ Add these environment variables in your Render static site:
    - Example: `https://your-backend-service.onrender.com/api`
    - **Required**: Yes
    - **Note**: Must start with `REACT_APP_` prefix for React to access it
+
+2. **REACT_APP_GOOGLE_CLIENT_ID**
+   - Description: Google OAuth Client ID for Google Sign-In
+   - Example: `123456789-abcdefg.apps.googleusercontent.com`
+   - **Required**: Yes (for Google OAuth authentication)
+   - **Note**: Must start with `REACT_APP_` prefix. Get this from Google Cloud Console (see GOOGLE_OAUTH_SETUP.md)
 
 ---
 
@@ -215,7 +222,7 @@ EMAIL_SERVICE=gmail
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
 OPENAI_API_KEY=sk-... (optional)
-GOOGLE_CLIENT_ID=... (optional)
+GOOGLE_CLIENT_ID=123456789-abcdefg.apps.googleusercontent.com (required for Google OAuth)
 GOOGLE_CLIENT_SECRET=... (optional)
 GOOGLE_REDIRECT_URI=https://your-backend.onrender.com/api/calendar/callback (optional)
 ```
@@ -223,5 +230,6 @@ GOOGLE_REDIRECT_URI=https://your-backend.onrender.com/api/calendar/callback (opt
 ### Frontend Static Site:
 ```
 REACT_APP_API_URL=https://your-backend.onrender.com/api
+REACT_APP_GOOGLE_CLIENT_ID=123456789-abcdefg.apps.googleusercontent.com
 ```
 
