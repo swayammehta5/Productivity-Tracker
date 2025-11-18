@@ -10,12 +10,21 @@ const GoogleLogin = () => {
 
   const handleSuccess = async (credentialResponse) => {
     try {
-      await googleLogin(credentialResponse.credential);
+      console.log('🔍 GoogleLogin: Token received, length:', credentialResponse.credential?.length);
+      console.log('🔍 GoogleLogin: Calling googleLogin with token...');
+      const result = await googleLogin(credentialResponse.credential);
+      console.log('🔍 GoogleLogin: Success!', result);
       toast.success('Successfully logged in with Google!');
       navigate('/');
     } catch (error) {
-      toast.error('Failed to login with Google. Please try again.');
-      console.error('Google login error:', error);
+      console.error('🔍 GoogleLogin: Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        fullError: error
+      });
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to login with Google';
+      toast.error(errorMessage);
     }
   };
 
