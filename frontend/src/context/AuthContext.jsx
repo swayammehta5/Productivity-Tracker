@@ -12,23 +12,28 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  console.log('🔍 AuthProvider: Initializing...');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [initializing, setInitializing] = useState(true); 
   // This prevents redirects before auth is checked
 
   useEffect(() => {
+    console.log('🔍 AuthProvider: useEffect running...');
     const loadUser = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
+        console.log('🔍 AuthProvider: No token found');
         setLoading(false);
         setInitializing(false);
         return;
       }
 
       try {
+        console.log('🔍 AuthProvider: Loading user with token...');
         const response = await authAPI.getMe();
         setUser(response.data.user);
+        console.log('🔍 AuthProvider: User loaded successfully');
       } catch (error) {
         console.error("Auth error:", error.message);
         localStorage.removeItem('token');
@@ -82,19 +87,25 @@ export const AuthProvider = ({ children }) => {
     setUser(prev => ({ ...prev, ...data }));
   };
 
+  const contextValue = {
+    user,
+    loading,
+    initializing,
+    login,
+    register,
+    googleLogin,
+    logout,
+    updateUser
+  };
+
+  console.log('🔍 AuthProvider: Rendering with context value:', { 
+    hasUser: !!user, 
+    loading, 
+    initializing 
+  });
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        initializing,
-        login,
-        register,
-        googleLogin,
-        logout,
-        updateUser
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
