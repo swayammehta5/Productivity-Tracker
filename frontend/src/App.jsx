@@ -28,31 +28,20 @@ import CalendarSync from './components/Calendar/CalendarSync';
 
 
 function AppContent() {
-  console.log('🔍 AppContent: Attempting to use useAuth...');
+  console.log('🔍 AppContent: Function called');
+  
+  // Use useAuth - if it fails, the ErrorBoundary will catch it
   let user, initializing;
   try {
+    console.log('🔍 AppContent: Calling useAuth...');
     const auth = useAuth();
     user = auth.user;
     initializing = auth.initializing;
     console.log('🔍 AppContent: useAuth successful', { hasUser: !!user, initializing });
   } catch (error) {
-    console.error('🔍 AppContent: useAuth failed:', error);
-    // Return error UI instead of crashing
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md">
-          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
-            ⚠️ Authentication Error
-          </h1>
-          <p className="text-gray-700 dark:text-gray-300">
-            {error.message}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-            Please refresh the page or contact support.
-          </p>
-        </div>
-      </div>
-    );
+    console.error('🔍 AppContent: useAuth ERROR:', error);
+    // Re-throw so ErrorBoundary can catch it
+    throw error;
   }
 
   /* ✅ FIXED PRIVATEROUTE — moved inside AppContent to ensure AuthProvider is available */
@@ -112,7 +101,9 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <AppContent />
+          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div>Loading...</div></div>}>
+            <AppContent />
+          </React.Suspense>
           <ToastContainer
             position="top-right"
             autoClose={5000}

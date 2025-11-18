@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext_fixed';
+import { useAuth } from '../../context/AuthContext';
 import { authAPI, statsAPI } from '../../services/api';
 
 const Profile = () => {

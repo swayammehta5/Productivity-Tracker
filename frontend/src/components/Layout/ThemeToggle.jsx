@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
-import { useAuth } from '../../context/AuthContext_fixed';
+import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../services/api';
 
 const ThemeToggle = () => {
