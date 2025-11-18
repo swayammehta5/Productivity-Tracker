@@ -16,8 +16,15 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function() {
+      return !this.googleId; // Password required only if not using Google OAuth
+    },
     minlength: 6
+  },
+  googleId: {
+    type: String,
+    default: null,
+    sparse: true // Allows multiple null values but enforces uniqueness for non-null
   },
   theme: {
     type: String,
@@ -77,7 +84,8 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
+  // Only hash password if it's modified and exists (not for Google OAuth users)
+  if (!this.isModified('password') || !this.password) {
     return next();
   }
   const salt = await bcrypt.genSalt(10);

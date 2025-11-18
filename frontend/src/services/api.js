@@ -64,10 +64,10 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (error) {
-        // If refresh token fails, clear auth and redirect to login
+        // If refresh token fails, clear auth and redirect to home
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = '/';
         return Promise.reject(error);
       }
     }
@@ -89,6 +89,7 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
+  googleLogin: (tokenId) => api.post('/auth/google', { tokenId }),
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data)
 };

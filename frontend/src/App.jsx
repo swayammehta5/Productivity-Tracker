@@ -2,11 +2,10 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider, useAuth } from './context/AuthContext_fixed';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
-import Login from './components/Auth/Login_fixed';
-import Register from './components/Auth/Register';
+import GoogleLogin from './components/Auth/GoogleLogin';
 import Dashboard from './components/Dashboard/Dashboard';
 import HabitsList from './components/Habits/HabitsList';
 import AddHabit from './components/Habits/AddHabit';
@@ -41,7 +40,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  return user ? children : <Navigate to="/login" />;
+  return user ? children : <Navigate to="/" />;
 };
 
 
@@ -57,15 +56,9 @@ function AppContent() {
 
       <Routes>
         <Route
-          path="/login"
-          element={!user && !blockUntilReady ? <Login /> : <Navigate to="/" />}
+          path="/"
+          element={!user && !blockUntilReady ? <GoogleLogin /> : <PrivateRoute><Dashboard /></PrivateRoute>}
         />
-        <Route
-          path="/register"
-          element={!user && !blockUntilReady ? <Register /> : <Navigate to="/" />}
-        />
-
-        <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/habits" element={<PrivateRoute><HabitsList /></PrivateRoute>} />
         <Route path="/add-habit" element={<PrivateRoute><AddHabit /></PrivateRoute>} />
         <Route path="/tasks" element={<PrivateRoute><TasksList /></PrivateRoute>} />
