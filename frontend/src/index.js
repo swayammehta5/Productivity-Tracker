@@ -4,6 +4,11 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css';
 import App from './App';
 
+// Debug: Log environment variables (will be replaced at build time)
+console.log('🔍 Build-time Environment Check:');
+console.log('REACT_APP_GOOGLE_CLIENT_ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID || '(NOT SET)');
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL || '(NOT SET)');
+
 // Wrap localStorage access in a check
 const getStoredTheme = () => {
   if (typeof window !== 'undefined' && window.localStorage) {
@@ -13,6 +18,10 @@ const getStoredTheme = () => {
 };
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+
+// Additional debug
+console.log('🔍 Runtime Check - GOOGLE_CLIENT_ID value:', GOOGLE_CLIENT_ID || '(EMPTY)');
+console.log('🔍 Runtime Check - GOOGLE_CLIENT_ID length:', GOOGLE_CLIENT_ID ? GOOGLE_CLIENT_ID.length : 0);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
