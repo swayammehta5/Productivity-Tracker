@@ -25,15 +25,76 @@ console.log('🔍 Runtime Check - GOOGLE_CLIENT_ID length:', GOOGLE_CLIENT_ID ? 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ 
+          minHeight: '100vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          backgroundColor: '#f3f4f6',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          padding: '20px'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '40px',
+            borderRadius: '12px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            maxWidth: '600px',
+            textAlign: 'center'
+          }}>
+            <h1 style={{ color: '#ef4444', marginBottom: '20px' }}>⚠️ Application Error</h1>
+            <p style={{ color: '#374151', marginBottom: '20px', fontSize: '16px' }}>
+              {this.state.error?.message || 'An error occurred while loading the application.'}
+            </p>
+            <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '10px' }}>
+              Please check the browser console for more details.
+            </p>
+            <button 
+              onClick={() => window.location.reload()}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 // Always render the app, but handle missing Client ID gracefully
 try {
-  root.render(
-    <React.StrictMode>
-      {GOOGLE_CLIENT_ID ? (
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-          <App />
-        </GoogleOAuthProvider>
-      ) : (
+  if (!GOOGLE_CLIENT_ID) {
+    root.render(
+      <React.StrictMode>
         <div style={{ 
           minHeight: '100vh', 
           display: 'flex', 
@@ -59,15 +120,25 @@ try {
               See <strong>GOOGLE_OAUTH_SETUP.md</strong> for setup instructions.
             </p>
             <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '20px' }}>
-              Current value: {GOOGLE_CLIENT_ID || '(empty)'}
+              Current value: (empty)
             </p>
           </div>
         </div>
-      )}
-    </React.StrictMode>
-  );
+      </React.StrictMode>
+    );
+  } else {
+    root.render(
+      <React.StrictMode>
+        <ErrorBoundary>
+          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+            <App />
+          </GoogleOAuthProvider>
+        </ErrorBoundary>
+      </React.StrictMode>
+    );
+  }
 } catch (error) {
-  console.error('Error rendering app:', error);
+  console.error('Fatal error rendering app:', error);
   root.render(
     <div style={{ 
       minHeight: '100vh', 
@@ -86,9 +157,9 @@ try {
         maxWidth: '600px',
         textAlign: 'center'
       }}>
-        <h1 style={{ color: '#ef4444', marginBottom: '20px' }}>⚠️ Application Error</h1>
+        <h1 style={{ color: '#ef4444', marginBottom: '20px' }}>⚠️ Fatal Error</h1>
         <p style={{ color: '#374151', marginBottom: '20px', fontSize: '16px' }}>
-          {error.message || 'An error occurred while loading the application.'}
+          {error.message || 'A fatal error occurred while loading the application.'}
         </p>
         <p style={{ color: '#6b7280', fontSize: '14px' }}>
           Please check the browser console for more details.
