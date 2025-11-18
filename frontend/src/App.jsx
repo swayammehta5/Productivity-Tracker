@@ -27,25 +27,49 @@ import NotificationManager from './components/Notifications/NotificationManager'
 import CalendarSync from './components/Calendar/CalendarSync';
 
 
-/* ✅ FIXED PRIVATEROUTE — no infinite loop */
-const PrivateRoute = ({ children }) => {
-  const { user, loading, initializing } = useAuth();
-
-  // Prevent redirect loop during auth check
-  if (initializing || loading) {
+function AppContent() {
+  console.log('🔍 AppContent: Attempting to use useAuth...');
+  let user, initializing;
+  try {
+    const auth = useAuth();
+    user = auth.user;
+    initializing = auth.initializing;
+    console.log('🔍 AppContent: useAuth successful', { hasUser: !!user, initializing });
+  } catch (error) {
+    console.error('🔍 AppContent: useAuth failed:', error);
+    // Return error UI instead of crashing
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 max-w-md">
+          <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
+            ⚠️ Authentication Error
+          </h1>
+          <p className="text-gray-700 dark:text-gray-300">
+            {error.message}
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+            Please refresh the page or contact support.
+          </p>
+        </div>
       </div>
     );
   }
 
-  return user ? children : <Navigate to="/" />;
-};
+  /* ✅ FIXED PRIVATEROUTE — moved inside AppContent to ensure AuthProvider is available */
+  const PrivateRoute = ({ children }) => {
+    const { user: routeUser, loading, initializing: routeInitializing } = useAuth();
 
+    // Prevent redirect loop during auth check
+    if (routeInitializing || loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-xl">Loading...</div>
+        </div>
+      );
+    }
 
-function AppContent() {
-  const { user, initializing } = useAuth();
+    return routeUser ? children : <Navigate to="/" />;
+  };
 
   // Prevent login/register redirect loop during initialization
   const blockUntilReady = initializing ? true : false;
@@ -83,6 +107,7 @@ function AppContent() {
 
 
 function App() {
+  console.log('🔍 App: Rendering...');
   return (
     <BrowserRouter>
       <AuthProvider>

@@ -4,6 +4,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css';
 import App from './App';
 
+// Verify package is loaded
+console.log('🔍 Package Check - GoogleOAuthProvider:', typeof GoogleOAuthProvider !== 'undefined' ? '✅ Loaded' : '❌ Not found');
+
 // Debug: Log environment variables (will be replaced at build time)
 console.log('🔍 Build-time Environment Check:');
 console.log('REACT_APP_GOOGLE_CLIENT_ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID || '(NOT SET)');
@@ -127,15 +130,59 @@ try {
       </React.StrictMode>
     );
   } else {
-    root.render(
-      <React.StrictMode>
-        <ErrorBoundary>
-          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-            <App />
-          </GoogleOAuthProvider>
-        </ErrorBoundary>
-      </React.StrictMode>
-    );
+    // Try to render with GoogleOAuthProvider, but catch any initialization errors
+    try {
+      root.render(
+        <React.StrictMode>
+          <ErrorBoundary>
+            <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+              <App />
+            </GoogleOAuthProvider>
+          </ErrorBoundary>
+        </React.StrictMode>
+      );
+    } catch (oauthError) {
+      console.error('GoogleOAuthProvider initialization error:', oauthError);
+      // Fallback: render App without GoogleOAuthProvider (for debugging)
+      root.render(
+        <React.StrictMode>
+          <ErrorBoundary>
+            <div style={{ 
+              minHeight: '100vh', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              backgroundColor: '#f3f4f6',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              padding: '20px'
+            }}>
+              <div style={{
+                backgroundColor: 'white',
+                padding: '40px',
+                borderRadius: '12px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                maxWidth: '600px',
+                textAlign: 'center'
+              }}>
+                <h1 style={{ color: '#ef4444', marginBottom: '20px' }}>⚠️ Google OAuth Error</h1>
+                <p style={{ color: '#374151', marginBottom: '20px', fontSize: '16px' }}>
+                  Failed to initialize Google OAuth Provider.
+                </p>
+                <p style={{ color: '#6b7280', fontSize: '14px', marginBottom: '10px' }}>
+                  Error: {oauthError.message || 'Unknown error'}
+                </p>
+                <p style={{ color: '#6b7280', fontSize: '12px' }}>
+                  Client ID: {GOOGLE_CLIENT_ID.substring(0, 20)}...
+                </p>
+                <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '10px' }}>
+                  Check browser console for details. Package installed: {typeof GoogleOAuthProvider !== 'undefined' ? 'Yes' : 'No'}
+                </p>
+              </div>
+            </div>
+          </ErrorBoundary>
+        </React.StrictMode>
+      );
+    }
   }
 } catch (error) {
   console.error('Fatal error rendering app:', error);
