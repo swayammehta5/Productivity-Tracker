@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI, statsAPI } from '../../services/api';
 
@@ -252,71 +251,6 @@ const Profile = () => {
           {loading ? 'Saving...' : 'Save Changes'}
         </button>
       </form>
-
-      {/* Additional Features */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-6">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          Additional Features
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link
-            to="/2fa"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">🔐 Two-Factor Authentication</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Enable 2FA for extra security</p>
-          </Link>
-          <Link
-            to="/backup"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">📦 Backup & Restore</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Export or import your data</p>
-          </Link>
-          <Link
-            to="/calendar-sync"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">📅 Calendar Sync</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Sync with Google Calendar</p>
-          </Link>
-          <Link
-            to="/notifications"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">🔔 Notifications</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Manage notification settings</p>
-          </Link>
-          <Link
-            to="/templates"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">🪄 Habit Templates</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Use pre-made habit templates</p>
-          </Link>
-          <Link
-            to="/ai-chat"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">💬 AI Coach</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Chat with AI productivity coach</p>
-          </Link>
-          <Link
-            to="/location"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">📍 Location Habits</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Location-based habits and tasks</p>
-          </Link>
-          <Link
-            to="/voice"
-            className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-          >
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">🎤 Voice Assistant</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Control with voice commands</p>
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };

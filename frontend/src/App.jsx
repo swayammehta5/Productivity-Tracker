@@ -14,15 +14,11 @@ import CalendarView from './components/Calendar/CalendarView';
 import Profile from './components/Profile/Profile';
 import Navbar from './components/Layout/Navbar';
 import Reports from './components/Reports/Reports';
-import MoodTracker from './components/Mood/MoodTracker';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import GamificationDashboard from './components/Gamification/GamificationDashboard';
 import TwoFactorAuth from './components/Auth/TwoFactorAuth';
-import AIChat from './components/AI/AIChat';
 import BackupRestore from './components/Backup/BackupRestore';
 import HabitTemplates from './components/Templates/HabitTemplates';
-import LocationHabits from './components/Location/LocationHabits';
-import VoiceAssistant from './components/Voice/VoiceAssistant';
 import NotificationManager from './components/Notifications/NotificationManager';
 import CalendarSync from './components/Calendar/CalendarSync';
 
@@ -77,16 +73,12 @@ function AppContent() {
         <Route path="/tasks" element={<PrivateRoute><TasksList /></PrivateRoute>} />
         <Route path="/calendar" element={<PrivateRoute><CalendarView /></PrivateRoute>} />
         <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
-        <Route path="/mood" element={<PrivateRoute><MoodTracker /></PrivateRoute>} />
         <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
         <Route path="/gamification" element={<PrivateRoute><GamificationDashboard /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/2fa" element={<PrivateRoute><TwoFactorAuth /></PrivateRoute>} />
-        <Route path="/ai-chat" element={<PrivateRoute><AIChat /></PrivateRoute>} />
         <Route path="/backup" element={<PrivateRoute><BackupRestore /></PrivateRoute>} />
         <Route path="/templates" element={<PrivateRoute><HabitTemplates /></PrivateRoute>} />
-        <Route path="/location" element={<PrivateRoute><LocationHabits /></PrivateRoute>} />
-        <Route path="/voice" element={<PrivateRoute><VoiceAssistant /></PrivateRoute>} />
         <Route path="/notifications" element={<PrivateRoute><NotificationManager /></PrivateRoute>} />
         <Route path="/calendar-sync" element={<PrivateRoute><CalendarSync /></PrivateRoute>} />
       </Routes>

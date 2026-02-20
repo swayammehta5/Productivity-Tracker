@@ -169,33 +169,6 @@ const Reports = () => {
             </div>
           </div>
 
-          {/* Mood Insights */}
-          {data.moods && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Mood Insights
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Average Energy Level</p>
-                  <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
-                    {data.moods.averageEnergy?.toFixed(1) || 0}/10
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Mood Distribution</p>
-                  <div className="space-y-2">
-                    {Object.entries(data.moods.moodDistribution || {}).map(([mood, count]) => (
-                      <div key={mood} className="flex items-center justify-between">
-                        <span className="text-gray-700 dark:text-gray-300">{mood}</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </>
       )}
     </div>
