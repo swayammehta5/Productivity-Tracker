@@ -14,7 +14,6 @@ const Navbar = () => {
     { path: '/tasks', label: 'Tasks' },
     { path: '/calendar', label: 'Calendar' },
     { path: '/reports', label: 'Reports' },
-    { path: '/mood', label: 'Mood' },
     { path: '/leaderboard', label: 'Leaderboard' },
     { path: '/gamification', label: 'Gamification' },
     { path: '/profile', label: 'Profile' }

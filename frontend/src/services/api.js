@@ -11,7 +11,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds - increased for Render deployment
   withCredentials: true
 });
 
@@ -37,9 +37,13 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
-    // Handle network errors
+    // Handle network errors and timeouts
     if (!error.response) {
-      toast.error('Network error. Please check your connection.');
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        toast.error('Request timeout. The server is taking too long to respond. Please try again.');
+      } else {
+        toast.error('Network error. Please check your connection.');
+      }
       return Promise.reject(error);
     }
 
@@ -119,23 +123,10 @@ export const statsAPI = {
   getCombined: () => api.get('/stats')
 };
 
-// ✅ AI
-export const aiAPI = {
-  getSuggestions: () => api.get('/ai/suggestions'),
-  chat: (message) => api.post('/ai/chat', { message })
-};
-
 // ✅ Reports
 export const reportsAPI = {
   getWeekly: () => api.get('/reports/weekly'),
   getMonthly: () => api.get('/reports/monthly')
-};
-
-// ✅ Mood
-export const moodAPI = {
-  create: (data) => api.post('/mood', data),
-  getAll: (params) => api.get('/mood', { params }),
-  getInsights: () => api.get('/mood/insights')
 };
 
 // ✅ Collaboration
@@ -186,12 +177,6 @@ export const templatesAPI = {
 export const gamificationAPI = {
   getStats: () => api.get('/gamification/stats'),
   awardXP: (data) => api.post('/gamification/award-xp', data)
-};
-
-// ✅ Location
-export const locationAPI = {
-  getNearby: (params) => api.get('/location/nearby', { params }),
-  updateHomeLocation: (data) => api.post('/location/home-location', data)
 };
 
 export default api;

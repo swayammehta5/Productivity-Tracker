@@ -2,7 +2,6 @@ const express = require('express');
 const auth = require('../middleware/auth');
 const Habit = require('../models/Habit');
 const Task = require('../models/Task');
-const Mood = require('../models/Mood');
 
 const router = express.Router();
 
@@ -13,10 +12,9 @@ router.get('/weekly', auth, async (req, res) => {
     const startDate = new Date();
     startDate.setDate(endDate.getDate() - 7);
 
-    const [habits, tasks, moods] = await Promise.all([
+    const [habits, tasks] = await Promise.all([
       Habit.find({ user: req.user._id }),
-      Task.find({ userId: req.user._id }),
-      Mood.find({ user: req.user._id, date: { $gte: startDate, $lte: endDate } })
+      Task.find({ userId: req.user._id })
     ]);
 
     // Calculate habit completion rate
@@ -73,13 +71,6 @@ router.get('/weekly', auth, async (req, res) => {
         completed: completedTasks,
         completionRate: tasksInPeriod.length > 0 ? (completedTasks / tasksInPeriod.length) * 100 : 0
       },
-      moods: moods.length > 0 ? {
-        averageEnergy: moods.reduce((sum, m) => sum + m.energyLevel, 0) / moods.length,
-        moodDistribution: moods.reduce((acc, m) => {
-          acc[m.mood] = (acc[m.mood] || 0) + 1;
-          return acc;
-        }, {})
-      } : null,
       consistencyScore: Math.round(consistencyScore * 10) / 10
     });
   } catch (error) {
@@ -94,10 +85,9 @@ router.get('/monthly', auth, async (req, res) => {
     const startDate = new Date();
     startDate.setMonth(endDate.getMonth() - 1);
 
-    const [habits, tasks, moods] = await Promise.all([
+    const [habits, tasks] = await Promise.all([
       Habit.find({ user: req.user._id }),
-      Task.find({ userId: req.user._id }),
-      Mood.find({ user: req.user._id, date: { $gte: startDate, $lte: endDate } })
+      Task.find({ userId: req.user._id })
     ]);
 
     // Calculate weekly breakdown
@@ -145,15 +135,6 @@ router.get('/monthly', auth, async (req, res) => {
     });
     const completedTasks = tasksInPeriod.filter(t => t.status === 'Completed').length;
 
-    // Mood statistics
-    const moodStats = moods.length > 0 ? {
-      averageEnergy: moods.reduce((sum, m) => sum + m.energyLevel, 0) / moods.length,
-      moodDistribution: moods.reduce((acc, m) => {
-        acc[m.mood] = (acc[m.mood] || 0) + 1;
-        return acc;
-      }, {})
-    } : null;
-
     res.json({
       period: 'monthly',
       startDate: startDate.toISOString(),
@@ -170,8 +151,7 @@ router.get('/monthly', auth, async (req, res) => {
         completed: completedTasks,
         completionRate: tasksInPeriod.length > 0 ? (completedTasks / tasksInPeriod.length) * 100 : 0,
         weeklyBreakdown: weeks
-      },
-      moods: moodStats
+      }
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

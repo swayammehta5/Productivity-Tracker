@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import { habitsAPI, tasksAPI, statsAPI } from '../../services/api';
 import HabitCard from './HabitCard';
 import StreakSummary from './StreakSummary';
-import SmartSuggestions from '../AI/SmartSuggestions';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -177,11 +176,6 @@ const Dashboard = () => {
       )}
 
       {stats && <StreakSummary stats={stats} completedToday={completedToday} totalToday={todayHabits.length} />}
-
-      {/* Smart Suggestions */}
-      <div className="mt-8 mb-8">
-        <SmartSuggestions />
-      </div>
 
       {/* Overdue Tasks Alert */}
       {overdueTasks.length > 0 && (

@@ -20,17 +20,10 @@ const { sendReminderEmail } = require('./utils/emailService');
 const authRoutes = require('./routes/auth');
 const habitRoutes = require('./routes/habits');
 const taskRoutes = require('./routes/tasks');
-const moodRoutes = require('./routes/mood');
 const reportsRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
-const aiRoutes = require('./routes/ai');
 const leaderboardRoutes = require('./routes/leaderboard');
-const templatesRoutes = require('./routes/templates');
-const backupRoutes = require('./routes/backup');
 const collaborationRoutes = require('./routes/collaboration');
-const calendarRoutes = require('./routes/calendar');
-const twoFactorRoutes = require('./routes/twoFactor');
-const locationRoutes = require('./routes/location');
 
 // Import middleware
 const auth = require('./middleware/auth');
@@ -63,17 +56,10 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/tasks', taskRoutes);
-app.use('/api/mood', moodRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/gamification', gamificationRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/templates', templatesRoutes);
-app.use('/api/backup', backupRoutes);
 app.use('/api/collaboration', collaborationRoutes);
-app.use('/api/calendar', calendarRoutes);
-app.use('/api/2fa', twoFactorRoutes);
-app.use('/api/location', locationRoutes);
 
 // Health check (works even if MongoDB is not connected)
 app.get('/api/health', (req, res) => {
