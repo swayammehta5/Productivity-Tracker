@@ -59,7 +59,9 @@ const Dashboard = () => {
       });
       
       return {
+        // ...habit to include all existing properties of the habit[spread operator]
         ...habit,
+
         completedToday: todayCompletion?.completed || false
       };
     });

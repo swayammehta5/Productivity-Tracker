@@ -9,6 +9,7 @@ router.get('/', auth, async (req, res) => {
   try {
     const habits = await Habit.find({ user: req.user._id }).sort({ createdAt: -1 });
     habits.forEach(habit => habit.calculateStreak());
+    // Save updated streaks without waiting for each save to complete
     await Promise.all(habits.map(habit => habit.save()));
     res.json(habits);
   } catch (error) {
@@ -58,10 +59,11 @@ router.post('/:id/complete', auth, async (req, res) => {
     if (!habit) {
       return res.status(404).json({ message: 'Habit not found' });
     }
-
+    // Remove time → compare only date
     const completionDate = new Date(date);
     completionDate.setHours(0, 0, 0, 0);
 
+    // Check if already completed for the day
     const existingCompletion = habit.completions.find(c => {
       const d = new Date(c.date);
       d.setHours(0, 0, 0, 0);

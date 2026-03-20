@@ -34,7 +34,14 @@ const AddHabit = () => {
       await habitsAPI.create(formData);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create habit');
+      const message = err.response?.data?.message || 'Failed to create habit';
+      setError(message);
+      // Redirect to login on auth errors (401)
+      if (err.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate('/', { replace: true });
+        window.location.reload();
+      }
     } finally {
       setLoading(false);
     }

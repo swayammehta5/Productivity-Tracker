@@ -87,34 +87,34 @@ router.get('/stats', auth, async (req, res) => {
 });
 
 // Award XP (called when completing habits/tasks)
-router.post('/award-xp', auth, async (req, res) => {
-  try {
-    const { xp, type, itemId } = req.body; // type: 'habit' or 'task'
+// router.post('/award-xp', auth, async (req, res) => {
+//   try {
+//     const { xp, type, itemId } = req.body; //get request data // type: 'habit' or 'task'
 
-    let userScore = await UserScore.findOne({ user: req.user._id });
-    if (!userScore) {
-      userScore = new UserScore({ user: req.user._id });
-    }
+//     let userScore = await UserScore.findOne({ user: req.user._id });
+//     if (!userScore) {
+//       userScore = new UserScore({ user: req.user._id });
+//     }
 
-    await userScore.addXP(xp);
+//     await userScore.addXP(xp);
 
-    if (type === 'habit') {
-      userScore.totalHabitsCompleted += 1;
-    } else if (type === 'task') {
-      userScore.totalTasksCompleted += 1;
-    }
+//     if (type === 'habit') {
+//       userScore.totalHabitsCompleted += 1;
+//     } else if (type === 'task') {
+//       userScore.totalTasksCompleted += 1;
+//     }
 
-    await userScore.save();
+//     await userScore.save();
 
-    res.json({
-      xp: userScore.totalXP,
-      level: userScore.currentLevel,
-      xpForNextLevel: (userScore.currentLevel * 100) - userScore.totalXP
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
+//     res.json({
+//       xp: userScore.totalXP,
+//       level: userScore.currentLevel,
+//       xpForNextLevel: (userScore.currentLevel * 100) - userScore.totalXP
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// });
 
 module.exports = router;
 

@@ -36,16 +36,16 @@ const userScoreSchema = new mongoose.Schema({
   }
 });
 
-userScoreSchema.methods.addXP = async function(points) {
-  this.totalXP = (this.totalXP || 0) + points;
-  const newLevel = Math.floor(this.totalXP / 100) + 1;
-  if (newLevel > this.currentLevel) {
-    this.currentLevel = newLevel;
-  }
-  this.lastUpdated = new Date();
-  await this.save();
-  return this;
-};
+// userScoreSchema.methods.addXP = async function(points) {
+//   this.totalXP = (this.totalXP || 0) + points;
+//   const newLevel = Math.floor(this.totalXP / 100) + 1;
+//   if (newLevel > this.currentLevel) {
+//     this.currentLevel = newLevel;
+//   }
+//   this.lastUpdated = new Date();
+//   await this.save();
+//   return this;
+// };
 
 userScoreSchema.methods.addBadge = async function(badgeName) {
   if (!this.badges) {

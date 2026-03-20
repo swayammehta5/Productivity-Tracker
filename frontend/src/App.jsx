@@ -17,10 +17,6 @@ import Reports from './components/Reports/Reports';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import GamificationDashboard from './components/Gamification/GamificationDashboard';
 import TwoFactorAuth from './components/Auth/TwoFactorAuth';
-import BackupRestore from './components/Backup/BackupRestore';
-import HabitTemplates from './components/Templates/HabitTemplates';
-import NotificationManager from './components/Notifications/NotificationManager';
-import CalendarSync from './components/Calendar/CalendarSync';
 
 
 function AppContent() {
@@ -77,10 +73,6 @@ function AppContent() {
         <Route path="/gamification" element={<PrivateRoute><GamificationDashboard /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/2fa" element={<PrivateRoute><TwoFactorAuth /></PrivateRoute>} />
-        <Route path="/backup" element={<PrivateRoute><BackupRestore /></PrivateRoute>} />
-        <Route path="/templates" element={<PrivateRoute><HabitTemplates /></PrivateRoute>} />
-        <Route path="/notifications" element={<PrivateRoute><NotificationManager /></PrivateRoute>} />
-        <Route path="/calendar-sync" element={<PrivateRoute><CalendarSync /></PrivateRoute>} />
       </Routes>
     </div>
   );

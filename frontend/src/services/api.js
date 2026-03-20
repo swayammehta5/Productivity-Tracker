@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-// Configure API base URL
+// Configure API base URL - REACT_APP_API_URL must be set in production (Render env vars)
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Create axios instance with default config
@@ -49,31 +49,13 @@ api.interceptors.response.use(
 
     const { status } = error.response;
 
-    // Handle 401 Unauthorized
+    // Handle 401 Unauthorized - clear auth and redirect to login
     if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
-      try {
-        // Try to refresh token if refresh token exists
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (refreshToken) {
-          const response = await axios.post(`${API_URL}/auth/refresh-token`, { refreshToken });
-          const { token, refreshToken: newRefreshToken } = response.data;
-          
-          localStorage.setItem('token', token);
-          localStorage.setItem('refreshToken', newRefreshToken);
-          
-          // Retry the original request
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return api(originalRequest);
-        }
-      } catch (error) {
-        // If refresh token fails, clear auth and redirect to home
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/';
-        return Promise.reject(error);
-      }
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      window.location.href = '/';
+      return Promise.reject(error);
     }
 
     // Handle other error statuses
@@ -99,6 +81,7 @@ export const authAPI = {
 };
 
 // ✅ HABITS
+// service layer for habits-related API calls
 export const habitsAPI = {
   getAll: () => api.get('/habits'),
   create: (data) => api.post('/habits', data),
@@ -167,16 +150,11 @@ export const backupAPI = {
 };
 
 // ✅ Templates
-export const templatesAPI = {
-  getAll: () => api.get('/templates'),
-  apply: (templateId) => api.post(`/templates/${templateId}/apply`),
-  initialize: () => api.post('/templates/initialize')
-};
 
 // ✅ Gamification
 export const gamificationAPI = {
   getStats: () => api.get('/gamification/stats'),
-  awardXP: (data) => api.post('/gamification/award-xp', data)
+  // awardXP: (data) => api.post('/gamification/award-xp', data)
 };
 
 export default api;

@@ -71,6 +71,13 @@ const CalendarView = () => {
     if (!selectedHabit) return;
 
     try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+      if (checkDate.getTime() !== today.getTime()) return;
+
       const isCompleted = isHabitCompleted(date);
       if (isCompleted) {
         await habitsAPI.uncomplete(selectedHabit._id, date.toISOString());
@@ -115,8 +122,8 @@ const CalendarView = () => {
         days.push(
           <button
             key={day}
-            onClick={() => !isFuture && handleToggleDay(date)}
-            disabled={isFuture}
+            onClick={() => isToday && handleToggleDay(date)}
+            disabled={!isToday}
             className={`aspect-square flex items-center justify-center rounded-lg font-medium transition-all ${
               isToday ? 'ring-2 ring-blue-500' : ''
             } ${
@@ -127,7 +134,7 @@ const CalendarView = () => {
                 : isFuture
                 ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                 : 'bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600'
-            }`}
+            } ${!isToday ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''}`}
           >
             {day}
           </button>
