@@ -36,16 +36,16 @@ const userScoreSchema = new mongoose.Schema({
   }
 });
 
-// userScoreSchema.methods.addXP = async function(points) {
-//   this.totalXP = (this.totalXP || 0) + points;
-//   const newLevel = Math.floor(this.totalXP / 100) + 1;
-//   if (newLevel > this.currentLevel) {
-//     this.currentLevel = newLevel;
-//   }
-//   this.lastUpdated = new Date();
-//   await this.save();
-//   return this;
-// };
+userScoreSchema.methods.addXP = async function(points) {
+  this.totalXP = (this.totalXP || 0) + points;
+  // Improved leveling formula: level = Math.floor(Math.sqrt(totalXP / 10)) + 1
+  const newLevel = Math.floor(Math.sqrt(this.totalXP / 10)) + 1;
+  // Fallback: if no XP, ensure level is at least 1
+  this.currentLevel = Math.max(newLevel, 1);
+  this.lastUpdated = new Date();
+  await this.save();
+  return this;
+};
 
 userScoreSchema.methods.addBadge = async function(badgeName) {
   if (!this.badges) {

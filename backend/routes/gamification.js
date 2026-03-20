@@ -69,7 +69,7 @@ router.get('/stats', auth, async (req, res) => {
     res.json({
       xp: userScore.totalXP,
       level: userScore.currentLevel,
-      xpForNextLevel: (userScore.currentLevel * 100) - userScore.totalXP,
+      xpForNextLevel: Math.pow((userScore.currentLevel + 1) - 1, 2) * 10 - userScore.totalXP,
       badges: userScore.badges.map(badgeId => 
         availableBadges.find(b => b.id === badgeId)
       ).filter(Boolean),

@@ -85,7 +85,7 @@ router.post('/:id/complete', auth, async (req, res) => {
       if (!userScore) {
         userScore = new UserScore({ user: req.user._id });
       }
-      await userScore.addXP(10); // 10 XP per habit completion
+      await userScore.addXP(25); // 25 XP per habit completion (increased from 10)
       userScore.totalHabitsCompleted += 1;
       
       // Update longest streak

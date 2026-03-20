@@ -23,7 +23,6 @@ const taskRoutes = require('./routes/tasks');
 const reportsRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
 const leaderboardRoutes = require('./routes/leaderboard');
-const collaborationRoutes = require('./routes/collaboration');
 
 // Import middleware
 const auth = require('./middleware/auth');
@@ -77,7 +76,6 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/collaboration', collaborationRoutes);
 
 // Health check (works even if MongoDB is not connected)
 app.get('/api/health', (req, res) => {
@@ -108,7 +106,7 @@ app.get('/api/stats', auth, async (req, res) => {
       0
     );
     const totalStreak = habits.reduce((sum, h) => sum + h.currentStreak, 0);
-    const longestStreak = Math.max(...habits.map(h => h.longestStreak), 0);
+    const longestStreak = habits.length > 0 ? Math.max(...habits.map(h => h.longestStreak || 0), 0) : 0;
 
     // Task stats
     const totalTasks = tasks.length;
@@ -209,6 +207,7 @@ const startServer = async () => {
     // Connect to MongoDB after server starts (non-blocking)
     try {
       await connectDB();
+      console.log('📝 NOTE: Collections for sharedhabits, habittemplates, and sharedtasks are deprecated and no longer used.');
     } catch (dbError) {
       console.error('⚠️  Server started but MongoDB connection failed.');
       console.error('⚠️  API endpoints will not work until MongoDB is connected.');

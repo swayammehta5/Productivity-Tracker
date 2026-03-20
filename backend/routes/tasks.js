@@ -95,7 +95,7 @@ router.put('/:id', auth, async (req, res) => {
             if (!userScore) {
               userScore = new UserScore({ user: req.user._id });
             }
-            await userScore.addXP(15); // 15 XP per task completion
+            await userScore.addXP(25); // 25 XP per task completion (increased from 15)
             userScore.totalTasksCompleted += 1;
             await userScore.save();
           } catch (error) {

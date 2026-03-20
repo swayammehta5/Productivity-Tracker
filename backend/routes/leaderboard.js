@@ -24,6 +24,15 @@ router.get('/', auth, async (req, res) => {
       .sort(sortOption)
       .limit(parseInt(limit));
 
+    // Handle empty data
+    if (!scores || scores.length === 0) {
+      return res.json({
+        leaderboard: [],
+        userRank: 0,
+        userScore: null
+      });
+    }
+
     // Get user's rank
     const userScore = await UserScore.findOne({ user: req.user._id });
     let userRank = 0;
@@ -39,25 +48,26 @@ router.get('/', auth, async (req, res) => {
       leaderboard: scores.map((score, index) => ({
         rank: index + 1,
         user: {
-          id: score.user._id,
-          name: score.user.name,
-          email: score.user.email,
-          profilePicture: score.user.profilePicture
+          id: score.user?._id || 'unknown',
+          name: score.user?.name || "Unknown",
+          email: score.user?.email || '',
+          profilePicture: score.user?.profilePicture || null
         },
-        totalXP: score.totalXP,
-        currentLevel: score.currentLevel,
-        longestStreak: score.longestStreak,
-        badges: score.badges
+        totalXP: score.totalXP || 0,
+        currentLevel: score.currentLevel || 1,
+        longestStreak: score.longestStreak || 0,
+        badges: score.badges || []
       })),
       userRank,
       userScore: userScore ? {
-        totalXP: userScore.totalXP,
-        currentLevel: userScore.currentLevel,
-        longestStreak: userScore.longestStreak,
-        badges: userScore.badges
+        totalXP: userScore.totalXP || 0,
+        currentLevel: userScore.currentLevel || 1,
+        longestStreak: userScore.longestStreak || 0,
+        badges: userScore.badges || []
       } : null
     });
   } catch (error) {
+    console.error('Leaderboard error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
