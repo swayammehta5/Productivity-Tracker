@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { reportsAPI } from '../../services/api';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+import {LineChart,  Line,  BarChart,Bar,XAxis,YAxis,CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer
