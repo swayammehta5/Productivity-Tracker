@@ -114,7 +114,7 @@ const Dashboard = () => {
   // Removed unused completedTasks variable
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 overflow-x-hidden">
       {/* Welcome Section */}
       <div className="mb-8 space-y-4 text-center sm:text-left animate-fade-in">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
@@ -207,7 +207,7 @@ const Dashboard = () => {
             </div>
             <Link
               to="/tasks"
-              className="mt-2 md:mt-0 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center"
+              className="mt-2 md:mt-0 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center active:scale-95"
             >
               View Tasks
             </Link>
@@ -221,7 +221,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Today's Habits</h2>
           <Link
             to="/add-habit"
-            className="group px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center"
+            className="group px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center active:scale-95"
           >
             <span className="flex items-center space-x-2">
               <span>+</span>
@@ -238,7 +238,7 @@ const Dashboard = () => {
             <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">No habits yet. Start building your routine!</p>
             <Link
               to="/add-habit"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300"
+              className="inline-block px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 active:scale-95"
             >
               Create Your First Habit
             </Link>
@@ -262,7 +262,7 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Tasks</h2>
           <Link
             to="/tasks"
-            className="group px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center"
+            className="group px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 text-center active:scale-95"
           >
             <span className="flex items-center space-x-2">
               <span>📋</span>
@@ -279,7 +279,7 @@ const Dashboard = () => {
             <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">No tasks yet. Start organizing your work!</p>
             <Link
               to="/tasks"
-              className="inline-block px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300"
+              className="inline-block px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl font-medium shadow-lg transform hover:scale-105 transition-all duration-300 active:scale-95"
             >
               Create Your First Task
             </Link>
@@ -293,7 +293,7 @@ const Dashboard = () => {
             {upcomingTasks.map(task => (
               <div
                 key={task._id}
-                className="group bg-white/80 dark:bg-black/40 backdrop-blur-xl rounded-2xl shadow-soft-lg border border-white/20 dark:border-white/10 p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-glass-light dark:hover:shadow-glass-dark"
+                className="group bg-white/80 dark:bg-black/40 backdrop-blur-xl rounded-2xl shadow-soft-lg border border-white/20 dark:border-white/10 p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-glass-light dark:hover:shadow-glass-dark animate-scale-in"
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
                 <div className="relative">

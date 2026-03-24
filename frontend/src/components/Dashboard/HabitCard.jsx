@@ -40,14 +40,14 @@ const HabitCard = ({ habit, onToggle }) => {
 
         <button
           onClick={onToggle}
-          className={`group relative w-full py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg overflow-hidden ${
+          className={`group relative w-full py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg overflow-hidden active:scale-95 ${
             habit.completedToday
               ? 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-green-500/25'
               : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-orange-500/25'
           }`}
         >
           <div className="relative flex items-center justify-center space-x-2">
-            <span className="text-lg">{habit.completedToday ? '✓' : '🎯'}</span>
+            <span className="text-lg transform transition-transform duration-300 group-hover:scale-110">{habit.completedToday ? '✓' : '🎯'}</span>
             <span>{habit.completedToday ? 'Completed' : 'Mark as Done'}</span>
           </div>
           {/* Hover effect overlay */}

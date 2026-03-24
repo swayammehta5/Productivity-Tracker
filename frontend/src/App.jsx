@@ -50,7 +50,7 @@ const PrivateRoute = ({ children }) => { // this is a wrapper component Only all
 function AppContent() {
   const { user, initializing } = useAuth();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-peach-50 dark:from-gray-900 dark:via-slate-900 dark:to-slate-800 transition-all duration-500 ease-in-out">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-peach-50 dark:from-gray-900 dark:via-slate-900 dark:to-slate-800 transition-all duration-500 ease-in-out overflow-x-hidden">
       {/* Show Navbar only if logged in */}
       {user && <Navbar />}
       <Routes>

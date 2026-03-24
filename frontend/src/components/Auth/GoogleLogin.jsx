@@ -63,7 +63,7 @@ const GoogleLogin = () => {
               
               {/* Google Sign-In Button */}
               <div className="flex justify-center">
-                <div className="transform hover:scale-105 transition-all duration-300 hover:shadow-glass-light dark:hover:shadow-glass-dark">
+                <div className="transform hover:scale-105 transition-all duration-300 hover:shadow-glass-light dark:hover:shadow-glass-dark active:scale-95">
                   <GoogleLoginButton
                     onSuccess={handleSuccess}
                     onError={handleError}
