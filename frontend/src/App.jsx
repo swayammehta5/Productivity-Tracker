@@ -1,86 +1,85 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
-import GoogleLogin from './components/Auth/GoogleLogin';
-import Dashboard from './components/Dashboard/Dashboard';
-import HabitsList from './components/Habits/HabitsList';
-import AddHabit from './components/Habits/AddHabit';
-import TasksList from './components/Tasks/TasksList';
-import CalendarView from './components/Calendar/CalendarView';
-import Profile from './components/Profile/Profile';
 import Navbar from './components/Layout/Navbar';
-import Reports from './components/Reports/Reports';
-import Leaderboard from './components/Leaderboard/Leaderboard';
-import GamificationDashboard from './components/Gamification/GamificationDashboard';
-import TwoFactorAuth from './components/Auth/TwoFactorAuth';
-import BackupRestore from './components/Backup/BackupRestore';
-import HabitTemplates from './components/Templates/HabitTemplates';
-import NotificationManager from './components/Notifications/NotificationManager';
-import CalendarSync from './components/Calendar/CalendarSync';
+
+// ✅ Lazy Loading (Performance Boost) Component loads ONLY when needed This is called on-demand loading
+const GoogleLogin = lazy(() => import('./components/Auth/GoogleLogin'));
+const Dashboard = lazy(() => import('./components/Dashboard/Dashboard'));
+const HabitsList = lazy(() => import('./components/Habits/HabitsList'));
+const AddHabit = lazy(() => import('./components/Habits/AddHabit'));
+const TasksList = lazy(() => import('./components/Tasks/TasksList'));
+const CalendarView = lazy(() => import('./components/Calendar/CalendarView'));
+const Profile = lazy(() => import('./components/Profile/Profile'));
+const Reports = lazy(() => import('./components/Reports/Reports'));
+const Leaderboard = lazy(() => import('./components/Leaderboard/Leaderboard'));
+const GamificationDashboard = lazy(() => import('./components/Gamification/GamificationDashboard'));
+const TwoFactorAuth = lazy(() => import('./components/Auth/TwoFactorAuth'));
+
+
+// ✅ Clean PrivateRoute
+const PrivateRoute = ({ user, initializing, children }) => {
+  if (initializing) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  return user ? children : <Navigate to="/" />;
+};
 
 
 function AppContent() {
-  console.log('🔍 AppContent: Function called');
-  
-  // Use useAuth - if it fails, the ErrorBoundary will catch it
-  let user, initializing;
-  try {
-    console.log('🔍 AppContent: Calling useAuth...');
-    const auth = useAuth();
-    user = auth.user;
-    initializing = auth.initializing;
-    console.log('🔍 AppContent: useAuth successful', { hasUser: !!user, initializing });
-  } catch (error) {
-    console.error('🔍 AppContent: useAuth ERROR:', error);
-    // Re-throw so ErrorBoundary can catch it
-    throw error;
+  const { user, initializing } = useAuth();
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("Auth State:", { user, initializing });
   }
-
-  /* ✅ FIXED PRIVATEROUTE — moved inside AppContent to ensure AuthProvider is available */
-  const PrivateRoute = ({ children }) => {
-    const { user: routeUser, loading, initializing: routeInitializing } = useAuth();
-
-    // Prevent redirect loop during auth check
-    if (routeInitializing || loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-xl">Loading...</div>
-        </div>
-      );
-    }
-
-    return routeUser ? children : <Navigate to="/" />;
-  };
-
-  // Prevent login/register redirect loop during initialization
-  const blockUntilReady = initializing ? true : false;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {user && <Navbar />}
 
       <Routes>
+
+        {/* ✅ Clean Root Logic */}
         <Route
           path="/"
-          element={!user && !blockUntilReady ? <GoogleLogin /> : <PrivateRoute><Dashboard /></PrivateRoute>}
+          element={
+            initializing
+              ? <div className="min-h-screen flex justify-center items-center">Loading...</div>
+              : user
+                ? <Navigate to="/dashboard" />
+                : <GoogleLogin />
+          }
         />
-        <Route path="/habits" element={<PrivateRoute><HabitsList /></PrivateRoute>} />
-        <Route path="/add-habit" element={<PrivateRoute><AddHabit /></PrivateRoute>} />
-        <Route path="/tasks" element={<PrivateRoute><TasksList /></PrivateRoute>} />
-        <Route path="/calendar" element={<PrivateRoute><CalendarView /></PrivateRoute>} />
-        <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
-        <Route path="/leaderboard" element={<PrivateRoute><Leaderboard /></PrivateRoute>} />
-        <Route path="/gamification" element={<PrivateRoute><GamificationDashboard /></PrivateRoute>} />
-        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-        <Route path="/2fa" element={<PrivateRoute><TwoFactorAuth /></PrivateRoute>} />
-        <Route path="/backup" element={<PrivateRoute><BackupRestore /></PrivateRoute>} />
-        <Route path="/templates" element={<PrivateRoute><HabitTemplates /></PrivateRoute>} />
-        <Route path="/notifications" element={<PrivateRoute><NotificationManager /></PrivateRoute>} />
-        <Route path="/calendar-sync" element={<PrivateRoute><CalendarSync /></PrivateRoute>} />
+
+        <Route path="/dashboard" element={
+          <PrivateRoute user={user} initializing={initializing}>
+            <Dashboard />
+          </PrivateRoute>
+        } />
+
+        <Route path="/habits" element={<PrivateRoute user={user} initializing={initializing}><HabitsList /></PrivateRoute>} />
+        <Route path="/add-habit" element={<PrivateRoute user={user} initializing={initializing}><AddHabit /></PrivateRoute>} />
+        <Route path="/tasks" element={<PrivateRoute user={user} initializing={initializing}><TasksList /></PrivateRoute>} />
+        <Route path="/calendar" element={<PrivateRoute user={user} initializing={initializing}><CalendarView /></PrivateRoute>} />
+        <Route path="/reports" element={<PrivateRoute user={user} initializing={initializing}><Reports /></PrivateRoute>} />
+        <Route path="/leaderboard" element={<PrivateRoute user={user} initializing={initializing}><Leaderboard /></PrivateRoute>} />
+        <Route path="/gamification" element={<PrivateRoute user={user} initializing={initializing}><GamificationDashboard /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute user={user} initializing={initializing}><Profile /></PrivateRoute>} />
+        <Route path="/2fa" element={<PrivateRoute user={user} initializing={initializing}><TwoFactorAuth /></PrivateRoute>} />
+        <Route path="/backup" element={<PrivateRoute user={user} initializing={initializing}><BackupRestore /></PrivateRoute>} />
+        <Route path="/templates" element={<PrivateRoute user={user} initializing={initializing}><HabitTemplates /></PrivateRoute>} />
+        <Route path="/notifications" element={<PrivateRoute user={user} initializing={initializing}><NotificationManager /></PrivateRoute>} />
+        <Route path="/calendar-sync" element={<PrivateRoute user={user} initializing={initializing}><CalendarSync /></PrivateRoute>} />
+
+        {/* ✅ 404 Page */}
+        <Route path="*" element={<div className="text-center mt-10 text-xl">404 - Page Not Found</div>} />
+
       </Routes>
     </div>
   );
@@ -88,26 +87,21 @@ function AppContent() {
 
 
 function App() {
-  console.log('🔍 App: Rendering...');
   return (
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div>Loading...</div></div>}>
+
+          <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              Loading...
+            </div>
+          }>
             <AppContent />
-          </React.Suspense>
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-          />
+          </Suspense>
+
+          <ToastContainer position="top-right" autoClose={5000} theme="colored" />
+
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -20,7 +20,11 @@ const getStoredTheme = () => {
   return null;
 };
 
-const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_ID = (process.env.REACT_APP_GOOGLE_CLIENT_ID || '').trim();
+const isValidClientId = GOOGLE_CLIENT_ID && 
+  GOOGLE_CLIENT_ID.length > 20 && 
+  !GOOGLE_CLIENT_ID.includes('your_google_client_id') &&
+  GOOGLE_CLIENT_ID.includes('.');
 
 // Additional debug
 console.log('🔍 Runtime Check - GOOGLE_CLIENT_ID value:', GOOGLE_CLIENT_ID || '(EMPTY)');
@@ -93,9 +97,9 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Always render the app, but handle missing Client ID gracefully
+// Always render the app, but handle missing/invalid Client ID gracefully
 try {
-  if (!GOOGLE_CLIENT_ID) {
+  if (!isValidClientId) {
     root.render(
       <React.StrictMode>
         <div style={{ 
@@ -117,13 +121,13 @@ try {
           }}>
             <h1 style={{ color: '#ef4444', marginBottom: '20px' }}>⚠️ Configuration Error</h1>
             <p style={{ color: '#374151', marginBottom: '20px', fontSize: '16px' }}>
-              Google OAuth Client ID is not configured. Please add <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>REACT_APP_GOOGLE_CLIENT_ID</code> to your environment variables in Render.
+              Google OAuth Client ID is not configured. Add <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>REACT_APP_GOOGLE_CLIENT_ID</code> in Render Dashboard → Your Frontend Service → Environment. Then add <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '4px' }}>https://your-app.onrender.com</code> to Google Cloud Console → APIs &amp; Services → Credentials → Authorized JavaScript origins.
             </p>
             <p style={{ color: '#6b7280', fontSize: '14px' }}>
               See <strong>GOOGLE_OAUTH_SETUP.md</strong> for setup instructions.
             </p>
             <p style={{ color: '#6b7280', fontSize: '12px', marginTop: '20px' }}>
-              Current value: (empty)
+              REACT_APP_API_URL: {process.env.REACT_APP_API_URL || '(not set)'}
             </p>
           </div>
         </div>

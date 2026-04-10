@@ -7,7 +7,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Add other environment variables in Render dashboard
+      # Required in Render Dashboard: FRONTEND_URL, JWT_SECRET, MONGODB_URI, GOOGLE_CLIENT_ID
 
   - type: web
     name: habit-tracker-frontend
@@ -17,5 +17,5 @@ services:
     envVars:
       - key: REACT_APP_API_URL
         value: https://habit-tracker-backend.onrender.com/api
-        # Update with your actual backend URL
+      # Required: Add REACT_APP_GOOGLE_CLIENT_ID in Render Dashboard
 

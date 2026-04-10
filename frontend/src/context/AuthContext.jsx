@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Auth error:", error.message);
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         setUser(null);
       }
 
