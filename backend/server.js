@@ -34,26 +34,8 @@ const app = express();
 // ===========================
 // 🔹 Middleware
 // ===========================
-// CORS - allow frontend origin (set FRONTEND_URL in Render to your frontend URL)
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-  process.env.FRONTEND_URL,
-  process.env.FRONTEND_URL?.replace(/\/$/, '') // without trailing slash
-].filter(Boolean);
-
-// Also allow *.onrender.com for flexible deployment
-const isAllowedOrigin = (origin) => {
-  if (!origin) return true;
-  if (allowedOrigins.includes(origin)) return true;
-  if (origin.endsWith('.onrender.com')) return true;
-  return false;
-};
-
 app.use(cors({
-  origin: (origin, callback) => {
-    callback(null, isAllowedOrigin(origin));
-  },
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']

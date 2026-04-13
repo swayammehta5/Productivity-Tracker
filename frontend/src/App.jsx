@@ -20,6 +20,10 @@ const Reports = lazy(() => import('./components/Reports/Reports'));
 const Leaderboard = lazy(() => import('./components/Leaderboard/Leaderboard'));
 const GamificationDashboard = lazy(() => import('./components/Gamification/GamificationDashboard'));
 const TwoFactorAuth = lazy(() => import('./components/Auth/TwoFactorAuth'));
+const BackupRestore = lazy(() => import('./components/Settings/BackupRestore'));
+const HabitTemplates = lazy(() => import('./components/Settings/HabitTemplates'));
+const NotificationManager = lazy(() => import('./components/Settings/NotificationManager'));
+const CalendarSync = lazy(() => import('./components/Settings/CalendarSync'));
 
 
 // ✅ Clean PrivateRoute
