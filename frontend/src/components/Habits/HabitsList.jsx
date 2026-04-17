@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { habitsAPI } from '../../services/api';
+import AddHabit from './AddHabit';
 
 const HabitsList = () => {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [habitToEdit, setHabitToEdit] = useState(null);
 
   useEffect(() => {
     loadHabits();
@@ -28,10 +32,35 @@ const HabitsList = () => {
       await habitsAPI.delete(habitId);
       setHabits(habits.filter(h => h._id !== habitId));
       setDeleteConfirm(null);
+      toast.success('Habit deleted successfully');
     } catch (error) {
       console.error('Failed to delete habit:', error);
-      alert('Failed to delete habit. Please try again.');
+      toast.error('Failed to delete habit. Please try again.');
     }
+  };
+
+  const handleEditClick = (habit) => {
+    setHabitToEdit(habit);
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setHabitToEdit(null);
+  };
+
+  const handleHabitSaved = (savedHabit) => {
+    if (habitToEdit) {
+      setHabits(prev =>
+        prev.map(habit => (habit._id === savedHabit._id ? savedHabit : habit))
+      );
+      toast.success('Habit updated successfully');
+      return;
+    }
+
+    // Keep newest habits first to match backend sorting.
+    setHabits(prev => [savedHabit, ...prev]);
+    toast.success('Habit created successfully');
   };
 
   const getFilteredHabits = () => {
@@ -62,12 +91,15 @@ const HabitsList = () => {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Habits</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage and track all your habits</p>
         </div>
-        <Link
-          to="/add-habit"
+        <button
+          onClick={() => {
+            setHabitToEdit(null);
+            setShowAddModal(true);
+          }}
           className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200 shadow-lg"
         >
           + Add New Habit
-        </Link>
+        </button>
       </div>
       <div className="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
         <button
@@ -114,12 +146,15 @@ const HabitsList = () => {
               : `You don't have any ${filter} habits at the moment.`}
           </p>
           {filter === 'all' && (
-            <Link
-              to="/add-habit"
+            <button
+              onClick={() => {
+                setHabitToEdit(null);
+                setShowAddModal(true);
+              }}
               className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200"
             >
               Create Your First Habit
-            </Link>
+            </button>
           )}
         </div>
       ) : (
@@ -184,6 +219,12 @@ const HabitsList = () => {
 
                   <div className="flex flex-col space-y-2 ml-4">
                     <button
+                      onClick={() => handleEditClick(habit)}
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition duration-200"
+                    >
+                      Edit
+                    </button>
+                    <button
                       onClick={() => setDeleteConfirm(habit._id)}
                       className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition duration-200"
                     >
@@ -217,6 +258,15 @@ const HabitsList = () => {
             </div>
           ))}
         </div>
+      )}
+
+      {showAddModal && (
+        <AddHabit 
+          onClose={handleCloseModal} 
+          habitToEdit={habitToEdit}
+          isModal={true}
+          onSaved={handleHabitSaved}
+        />
       )}
     </div>
   );

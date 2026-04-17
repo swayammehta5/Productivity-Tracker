@@ -40,36 +40,7 @@ This document outlines all 15 features that have been implemented in the Habit T
 - Calculates distance to location-based items
 - Available at `/location` route
 
-## 5. Smart Notifications & Reminders ✅
-
-**Location:** `frontend/src/components/Notifications/NotificationManager.jsx`
-
-- Uses Browser Notification API
-- Allows users to enable/disable browser notifications
-- Supports custom reminder times for habits and tasks
-- Shows notification permission status
-- Available at `/notifications` route
-
-## 6. Calendar Sync (Google Calendar Integration) ✅
-
-**Location:** `frontend/src/components/Calendar/CalendarSync.jsx`, `backend/routes/calendar.js`
-
-- Integrates with Google Calendar API
-- OAuth2 authentication flow
-- Syncs tasks with due dates to Google Calendar
-- Allows disconnecting Google Calendar
-- Available at `/calendar-sync` route
-
-## 7. Team Collaboration / Shared Tasks ✅
-
-**Location:** `backend/routes/collaboration.js`, `backend/models/SharedTask.js`, `backend/models/SharedHabit.js`
-
-- Allows sharing tasks and habits with other users
-- Role-based permissions (owner, collaborator, viewer)
-- Email invitations for collaboration
-- Backend API ready (frontend components can be added as needed)
-
-## 8. Mood & Productivity Journal ✅
+## 5. Mood & Productivity Journal ✅
 
 **Location:** `frontend/src/components/Mood/MoodTracker.jsx`, `backend/routes/mood.js`, `backend/models/Mood.js`
 
@@ -79,7 +50,7 @@ This document outlines all 15 features that have been implemented in the Habit T
 - Shows productivity insights and correlations
 - Available at `/mood` route
 
-## 9. Leaderboard or Competitive Mode ✅
+## 6. Leaderboard or Competitive Mode ✅
 
 **Location:** `frontend/src/components/Leaderboard/Leaderboard.jsx`, `backend/routes/leaderboard.js`, `backend/models/UserScore.js`
 
@@ -89,17 +60,7 @@ This document outlines all 15 features that have been implemented in the Habit T
 - Stores scores in MongoDB
 - Available at `/leaderboard` route
 
-## 10. Two-Factor Authentication (2FA) ✅
-
-**Location:** `frontend/src/components/Auth/TwoFactorAuth.jsx`, `backend/routes/twoFactor.js`, `frontend/src/components/Auth/Login.jsx`
-
-- Email OTP verification during login
-- Enable/disable 2FA in profile settings
-- OTP sent via email with 10-minute expiration
-- Secure authentication flow
-- Available at `/2fa` route
-
-## 11. AI Chat Productivity Coach ✅
+## 7. AI Chat Productivity Coach ✅
 
 **Location:** `frontend/src/components/AI/AIChat.jsx`, `backend/routes/ai.js`
 
@@ -109,26 +70,7 @@ This document outlines all 15 features that have been implemented in the Habit T
 - Based on user's progress data
 - Available at `/ai-chat` route
 
-## 12. Data Backup & Restore ✅
-
-**Location:** `frontend/src/components/Backup/BackupRestore.jsx`, `backend/routes/backup.js`
-
-- Export all user data as JSON file
-- Import data from backup file
-- Includes habits, tasks, moods, and user preferences
-- Available at `/backup` route
-
-## 13. Custom Habit Templates ✅
-
-**Location:** `frontend/src/components/Templates/HabitTemplates.jsx`, `backend/routes/templates.js`, `backend/models/HabitTemplate.js`
-
-- Pre-made habit templates (Morning Routine, Fitness Plan, etc.)
-- One-click template application
-- Multiple templates available
-- Initialize templates with: `npm run init-templates` in backend
-- Available at `/templates` route
-
-## 14. Gamification Dashboard ✅
+## 8. Gamification Dashboard ✅
 
 **Location:** `frontend/src/components/Gamification/GamificationDashboard.jsx`, `backend/routes/gamification.js`
 
@@ -138,7 +80,7 @@ This document outlines all 15 features that have been implemented in the Habit T
 - Tracks longest streaks and completions
 - Available at `/gamification` route
 
-## 15. AI Voice Assistant ✅
+## 9. AI Voice Assistant ✅
 
 **Location:** `frontend/src/components/Voice/VoiceAssistant.jsx`
 
@@ -151,9 +93,9 @@ This document outlines all 15 features that have been implemented in the Habit T
 ## Additional Updates
 
 ### Backend Models
-- Updated `User` model with 2FA, Google Calendar, location, and notification preferences
+- Updated `User` model with location and notification preferences
 - Updated `Habit` and `Task` models with location and reminder time fields
-- Created new models: `Mood`, `SharedTask`, `SharedHabit`, `UserScore`, `HabitTemplate`
+- Created new models: `Mood`, `UserScore`
 
 ### Frontend Updates
 - Updated Dashboard to include Smart Suggestions
@@ -165,9 +107,6 @@ This document outlines all 15 features that have been implemented in the Habit T
 ### Dependencies Added
 **Backend:**
 - `openai` - For AI features
-- `googleapis` - For Google Calendar integration
-- `otplib` - For 2FA (though we use email OTP)
-- `qrcode` - For QR code generation (for 2FA setup)
 
 **Frontend:**
 - `workbox-window` - For PWA service worker
@@ -181,12 +120,7 @@ Add these to your `.env` file:
 # OpenAI (for AI features)
 OPENAI_API_KEY=your_openai_api_key
 
-# Google Calendar (for calendar sync)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:5000/api/calendar/callback
-
-# Email (for notifications and 2FA)
+# Email
 EMAIL_SERVICE=gmail
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASS=your_app_password
@@ -209,21 +143,15 @@ cd frontend
 npm install
 ```
 
-3. Initialize habit templates:
-```bash
-cd backend
-npm run init-templates
-```
+3. Set up environment variables in `backend/.env`
 
-4. Set up environment variables in `backend/.env`
-
-5. Start the backend:
+4. Start the backend:
 ```bash
 cd backend
 npm run dev
 ```
 
-6. Start the frontend:
+5. Start the frontend:
 ```bash
 cd frontend
 npm start
@@ -231,12 +159,11 @@ npm start
 
 ## Notes
 
-- Some features require API keys (OpenAI, Google Calendar) to work fully
+- Some features require API keys (OpenAI) to work fully
 - Email functionality requires proper email service configuration
-- 2FA uses email OTP (in production, consider using Redis for OTP storage)
 - Voice Assistant requires browser support for Web Speech API
 - Location features require user permission for geolocation
 - PWA features work best when served over HTTPS in production
 
-All features are fully implemented and integrated into the application!
+Core features are fully implemented and integrated into the application!
 

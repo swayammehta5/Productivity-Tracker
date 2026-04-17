@@ -23,7 +23,6 @@ const taskRoutes = require('./routes/tasks');
 const reportsRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
 const leaderboardRoutes = require('./routes/leaderboard');
-const collaborationRoutes = require('./routes/collaboration');
 
 // Import middleware
 const auth = require('./middleware/auth');
@@ -37,7 +36,7 @@ const app = express();
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 }));
 
@@ -59,7 +58,6 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/collaboration', collaborationRoutes);
 
 // Health check (works even if MongoDB is not connected)
 app.get('/api/health', (req, res) => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { tasksAPI } from '../../services/api';
 
-const AddTask = ({ onClose, taskToEdit }) => {
+const AddTask = ({ onClose, taskToEdit, onSaved }) => {
   const [formData, setFormData] = useState({
     title: taskToEdit?.title || '',
     description: taskToEdit?.description || '',
@@ -25,10 +25,16 @@ const AddTask = ({ onClose, taskToEdit }) => {
     setLoading(true);
 
     try {
+      let response;
       if (taskToEdit) {
-        await tasksAPI.update(taskToEdit._id, formData);
+        response = await tasksAPI.update(taskToEdit._id, formData);
       } else {
-        await tasksAPI.create(formData);
+        response = await tasksAPI.create(formData);
+      }
+
+      // Let parent list patch local state immediately after save.
+      if (onSaved && response?.data) {
+        onSaved(response.data);
       }
       onClose();
     } catch (err) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { tasksAPI } from '../../services/api';
 
-const TaskCard = ({ task, onUpdate, onDelete }) => {
+const TaskCard = ({ task, onUpdate, onDelete, onEdit }) => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'High':
@@ -107,6 +107,12 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
             }`}
           >
             {task.status === 'Completed' ? '✓ Completed' : 'Mark Complete'}
+          </button>
+          <button
+            onClick={() => onEdit(task)}
+            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition duration-200 w-full sm:w-auto"
+          >
+            Edit
           </button>
           <button
             onClick={() => onDelete(task._id)}

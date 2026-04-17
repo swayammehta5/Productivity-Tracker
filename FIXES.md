@@ -30,12 +30,7 @@
    - Improved data validation
    - Better handling of user rank display
 
-### 6. **Templates**
-   - Added initialization button when no templates exist
-   - Better error handling
-   - Improved empty state display
-
-### 7. **AI Suggestions**
+### 6. **AI Suggestions**
    - Improved response handling
    - Better fallback to rule-based suggestions
    - Handles both array and object responses
@@ -54,12 +49,6 @@
    npm start
    ```
 
-3. **Initialize templates (if needed):**
-   ```bash
-   cd backend
-   npm run init-templates
-   ```
-
 ## Features That Should Now Work
 
 - ✅ Smart Suggestions (with fallback if OpenAI not available)
@@ -67,14 +56,12 @@
 - ✅ Mood Tracker
 - ✅ Gamification Dashboard
 - ✅ Leaderboard
-- ✅ Habit Templates (initialize if empty)
 - ✅ AI Chat (with fallback messages)
 - ✅ All other features with proper error handling
 
 ## Notes
 
 - If you see empty data, it's expected if you haven't created habits/tasks yet
-- Templates need to be initialized using the button in the Templates page or running `npm run init-templates`
 - AI features will use rule-based suggestions if OpenAI is not configured
 - All features now handle errors gracefully and show appropriate messages
 

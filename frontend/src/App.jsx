@@ -19,11 +19,6 @@ const Profile = lazy(() => import('./components/Profile/Profile'));
 const Reports = lazy(() => import('./components/Reports/Reports'));
 const Leaderboard = lazy(() => import('./components/Leaderboard/Leaderboard'));
 const GamificationDashboard = lazy(() => import('./components/Gamification/GamificationDashboard'));
-const TwoFactorAuth = lazy(() => import('./components/Auth/TwoFactorAuth'));
-const BackupRestore = lazy(() => import('./components/Settings/BackupRestore'));
-const HabitTemplates = lazy(() => import('./components/Settings/HabitTemplates'));
-const NotificationManager = lazy(() => import('./components/Settings/NotificationManager'));
-const CalendarSync = lazy(() => import('./components/Settings/CalendarSync'));
 
 
 // ✅ Clean PrivateRoute
@@ -75,11 +70,6 @@ function AppContent() {
         <Route path="/leaderboard" element={<PrivateRoute user={user} initializing={initializing}><Leaderboard /></PrivateRoute>} />
         <Route path="/gamification" element={<PrivateRoute user={user} initializing={initializing}><GamificationDashboard /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute user={user} initializing={initializing}><Profile /></PrivateRoute>} />
-        <Route path="/2fa" element={<PrivateRoute user={user} initializing={initializing}><TwoFactorAuth /></PrivateRoute>} />
-        <Route path="/backup" element={<PrivateRoute user={user} initializing={initializing}><BackupRestore /></PrivateRoute>} />
-        <Route path="/templates" element={<PrivateRoute user={user} initializing={initializing}><HabitTemplates /></PrivateRoute>} />
-        <Route path="/notifications" element={<PrivateRoute user={user} initializing={initializing}><NotificationManager /></PrivateRoute>} />
-        <Route path="/calendar-sync" element={<PrivateRoute user={user} initializing={initializing}><CalendarSync /></PrivateRoute>} />
 
         {/* ✅ 404 Page */}
         <Route path="*" element={<div className="text-center mt-10 text-xl">404 - Page Not Found</div>} />

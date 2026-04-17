@@ -111,48 +111,10 @@ export const reportsAPI = {
   getMonthly: () => api.get('/reports/monthly')
 };
 
-// ✅ Collaboration
-export const collaborationAPI = {
-  shareTask: (taskId, data) => api.post(`/collaboration/tasks/${taskId}/share`, data),
-  shareHabit: (habitId, data) => api.post(`/collaboration/habits/${habitId}/share`, data),
-  getSharedTasks: () => api.get('/collaboration/tasks/shared'),
-  getSharedHabits: () => api.get('/collaboration/habits/shared'),
-  removeCollaborator: (taskId, userId) =>
-    api.delete(`/collaboration/tasks/${taskId}/collaborators/${userId}`)
-};
-
 // ✅ Leaderboard
 export const leaderboardAPI = {
   getLeaderboard: (params) => api.get('/leaderboard', { params }),
   updateScore: (data) => api.post('/leaderboard/update', data)
-};
-
-// ✅ 2FA
-export const twoFactorAPI = {
-  generateOTP: (email) => api.post('/2fa/generate-otp', { email }),
-  enable: () => api.post('/2fa/enable'),
-  disable: () => api.post('/2fa/disable'),
-  verifyOTP: (email, otp) => api.post('/2fa/verify-otp', { email, otp })
-};
-
-// ✅ Calendar
-export const calendarAPI = {
-  getAuthUrl: () => api.get('/calendar/auth-url'),
-  sync: () => api.post('/calendar/sync'),
-  disconnect: () => api.post('/calendar/disconnect')
-};
-
-// ✅ Backup
-export const backupAPI = {
-  export: () => api.get('/backup/export'),
-  import: (data) => api.post('/backup/import', { backupData: data })
-};
-
-// ✅ Templates
-export const templatesAPI = {
-  getAll: () => api.get('/templates'),
-  apply: (templateId) => api.post(`/templates/${templateId}/apply`),
-  initialize: () => api.post('/templates/initialize')
 };
 
 // ✅ Gamification

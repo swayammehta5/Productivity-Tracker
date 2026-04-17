@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const HabitCard = ({ habit, onToggle }) => {
+const HabitCard = ({ habit, onToggle, onEdit }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-transform hover:scale-105">
       <div className="h-2" style={{ backgroundColor: habit.color }} />
@@ -48,12 +48,20 @@ const HabitCard = ({ habit, onToggle }) => {
           {habit.completedToday ? '✓ Completed' : 'Mark as Done'}
         </button>
 
-        <Link
-          to={`/habits`}
-          className="block mt-3 text-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          View Details
-        </Link>
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <button
+            onClick={onEdit}
+            className="text-center text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition duration-200"
+          >
+            Edit
+          </button>
+          <Link
+            to={`/habits`}
+            className="text-center text-sm text-blue-600 dark:text-blue-400 hover:underline py-2"
+          >
+            View Details
+          </Link>
+        </div>
       </div>
     </div>
   );

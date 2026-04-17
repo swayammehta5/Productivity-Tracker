@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { toast } from 'react-toastify';
 import { tasksAPI } from '../../services/api';
 import TaskCard from './TaskCard';
 import AddTask from './AddTask';
@@ -7,6 +8,7 @@ const TasksList = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
   const [filters, setFilters] = useState({
     status: 'all',
     priority: 'all',
@@ -14,11 +16,7 @@ const TasksList = () => {
     sortBy: 'createdAt'
   });
 
-  useEffect(() => {
-    loadTasks();
-  }, [filters]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const params = {};
       if (filters.status !== 'all') params.status = filters.status;
@@ -33,7 +31,11 @@ const TasksList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+
+  useEffect(() => {
+    loadTasks();
+  }, [loadTasks]);
 
   const handleDelete = async (taskId) => {
     if (!window.confirm('Are you sure you want to delete this task?')) {
@@ -42,14 +44,37 @@ const TasksList = () => {
     try {
       await tasksAPI.delete(taskId);
       setTasks(tasks.filter(t => t._id !== taskId));
+      toast.success('Task deleted successfully');
     } catch (error) {
       console.error('Failed to delete task:', error);
-      alert('Failed to delete task. Please try again.');
+      toast.error('Failed to delete task. Please try again.');
     }
+  };
+
+  const handleEditClick = (task) => {
+    setTaskToEdit(task);
+    setShowAddModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowAddModal(false);
+    setTaskToEdit(null);
   };
 
   const handleUpdate = () => {
     loadTasks();
+  };
+
+  const handleTaskSaved = (savedTask) => {
+    if (taskToEdit) {
+      setTasks(prev => prev.map(task => (task._id === savedTask._id ? savedTask : task)));
+      toast.success('Task updated successfully');
+      return;
+    }
+
+    // Place newly created task at the top for instant feedback.
+    setTasks(prev => [savedTask, ...prev]);
+    toast.success('Task created successfully');
   };
 
   const getCategories = () => {
@@ -77,7 +102,10 @@ const TasksList = () => {
           <p className="text-gray-600 dark:text-gray-400">Manage and track all your tasks</p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => {
+            setTaskToEdit(null);
+            setShowAddModal(true);
+          }}
           className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200 shadow-lg"
         >
           + Add New Task
@@ -161,7 +189,10 @@ const TasksList = () => {
             Start organizing your tasks and boost your productivity!
           </p>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setTaskToEdit(null);
+              setShowAddModal(true);
+            }}
             className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200"
           >
             Create Your First Task
@@ -175,6 +206,7 @@ const TasksList = () => {
               task={task}
               onUpdate={handleUpdate}
               onDelete={handleDelete}
+              onEdit={handleEditClick}
             />
           ))}
         </div>
@@ -182,10 +214,9 @@ const TasksList = () => {
 
       {showAddModal && (
         <AddTask
-          onClose={() => {
-            setShowAddModal(false);
-            loadTasks();
-          }}
+          onClose={handleCloseModal}
+          taskToEdit={taskToEdit}
+          onSaved={handleTaskSaved}
         />
       )}
     </div>

@@ -64,8 +64,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// PUT /api/tasks/:id - Update task details
-router.put('/:id', auth, async (req, res) => {
+const updateTaskHandler = async (req, res) => {
   try {
     const { title, description, dueDate, priority, status, category } = req.body;
     
@@ -112,7 +111,11 @@ router.put('/:id', auth, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
-});
+};
+
+// PUT/PATCH /api/tasks/:id - Update task details
+router.put('/:id', auth, updateTaskHandler);
+router.patch('/:id', auth, updateTaskHandler);
 
 // DELETE /api/tasks/:id - Delete a task
 router.delete('/:id', auth, async (req, res) => {

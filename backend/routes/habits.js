@@ -36,6 +36,34 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+const updateHabitHandler = async (req, res) => {
+  try {
+    const { name, description, frequency, goal, color } = req.body;
+    
+    const habit = await Habit.findOne({ _id: req.params.id, user: req.user._id });
+    
+    if (!habit) {
+      return res.status(404).json({ message: 'Habit not found' });
+    }
+
+    // Update only provided fields
+    if (name !== undefined) habit.name = name;
+    if (description !== undefined) habit.description = description;
+    if (frequency !== undefined) habit.frequency = frequency;
+    if (goal !== undefined) habit.goal = goal;
+    if (color !== undefined) habit.color = color;
+
+    await habit.save();
+    res.json(habit);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// PUT/PATCH /api/habits/:id - Update habit details
+router.put('/:id', auth, updateHabitHandler);
+router.patch('/:id', auth, updateHabitHandler);
+
 router.delete('/:id', auth, async (req, res) => {
   try {
     const habit = await Habit.findOneAndDelete({ _id: req.params.id, user: req.user._id });
