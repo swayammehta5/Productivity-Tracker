@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { habitsAPI, tasksAPI } from '../../services/api';
 
 const CalendarView = () => {
-  const [habits, setHabits] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState(null);
-  const [viewMode, setViewMode] = useState('habits');
+  const viewMode = 'habits';
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [loading, setLoading] = useState(true);
 
@@ -19,7 +18,6 @@ const CalendarView = () => {
         habitsAPI.getAll(),
         tasksAPI.getAll({ sortBy: 'dueDate' })
       ]);
-      setHabits(habitsRes.data);
       setTasks(tasksRes.data);
       if (habitsRes.data.length > 0) {
         setSelectedHabit(habitsRes.data[0]);
@@ -187,26 +185,28 @@ const CalendarView = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
+    return <div className="text-center mt-20 theme-text-secondary">Loading...</div>;
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Calendar View</h1>
+    <div className="app-page">
+      <h1 className="text-3xl theme-heading mb-4">Calendar View</h1>
 
-      <div className="flex justify-between mb-4">
-        <button onClick={() => changeMonth(-1)}>⬅</button>
-        <h2>{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-        <button onClick={() => changeMonth(1)}>➡</button>
+      <div className="app-card p-4 mb-4">
+        <div className="flex justify-between items-center">
+          <button className="btn-outline px-3 py-2" onClick={() => changeMonth(-1)}>⬅</button>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+          <button className="btn-outline px-3 py-2" onClick={() => changeMonth(1)}>➡</button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mb-2">
+      <div className="grid grid-cols-7 gap-2 mb-2 app-card p-3">
         {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day => (
-          <div key={day} className="text-center font-bold">{day}</div>
+          <div key={day} className="text-center font-bold theme-text-secondary">{day}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 app-card p-3">
         {renderCalendar()}
       </div>
     </div>

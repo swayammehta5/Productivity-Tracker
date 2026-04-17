@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: #fff5f0;
+  --card: #ffffff;
+  --primary: #ff7e5f;
+  --secondary: #feb47b;
+  --text-primary: #2d2d2d;
+  --text-secondary: #6b7280;
+  --border: #f5d2c4;
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --primary: #f97316;
+  --secondary: #fb923c;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  color-scheme: dark;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -20,6 +41,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text-primary);
+  transition: background-color 220ms ease, color 220ms ease;
 }
 
 #root {
@@ -28,6 +52,42 @@ body {
   overflow-x: hidden;
 }
 
-.dark {
-  color-scheme: dark;
+@layer components {
+  .app-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+
+  .app-card {
+    background: var(--card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    @apply rounded-2xl shadow-lg;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 font-semibold text-white transition-all duration-200;
+    background-image: linear-gradient(to right, var(--primary), var(--secondary));
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.28);
+  }
+
+  .btn-primary:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 font-medium transition-all duration-200;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--card) 90%, var(--primary) 10%);
+  }
+
+  .theme-text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .theme-heading {
+    color: var(--text-primary);
+    @apply font-bold tracking-tight;
+  }
 }

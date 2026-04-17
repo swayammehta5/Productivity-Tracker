@@ -12,14 +12,6 @@ console.log('🔍 Build-time Environment Check:');
 console.log('REACT_APP_GOOGLE_CLIENT_ID:', process.env.REACT_APP_GOOGLE_CLIENT_ID || '(NOT SET)');
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL || '(NOT SET)');
 
-// Wrap localStorage access in a check
-const getStoredTheme = () => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    return localStorage.getItem('theme');
-  }
-  return null;
-};
-
 const GOOGLE_CLIENT_ID = (process.env.REACT_APP_GOOGLE_CLIENT_ID || '').trim();
 const isValidClientId = GOOGLE_CLIENT_ID && 
   GOOGLE_CLIENT_ID.length > 20 && 

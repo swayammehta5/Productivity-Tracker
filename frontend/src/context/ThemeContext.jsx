@@ -13,19 +13,25 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const { user } = useAuth();
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (user?.theme) {
       setTheme(user.theme);
-      document.documentElement.classList.toggle('dark', user.theme === 'dark');
     }
   }, [user]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
   };
 
   return (

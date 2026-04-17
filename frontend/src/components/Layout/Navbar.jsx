@@ -26,11 +26,12 @@ const Navbar = () => {
           key={link.path}
           to={link.path}
           onClick={() => onLinkClick?.()}
-          className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
             location.pathname === link.path
-              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+              ? 'text-white shadow-md'
+              : 'theme-text-secondary hover:text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--card)_70%,var(--primary)_30%)]'
           }`}
+          style={location.pathname === link.path ? { backgroundImage: 'linear-gradient(to right, var(--primary), var(--secondary))' } : undefined}
         >
           {link.label}
         </Link>
@@ -39,11 +40,11 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-40 bg-white dark:bg-gray-800 shadow-lg">
+    <nav className="sticky top-0 z-40 backdrop-blur border-b border-[var(--border)] bg-[color:color-mix(in_srgb,var(--card)_88%,transparent)] shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <Link to="/" className="flex items-center">
-            <span className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+            <span className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
               🚀 ProductivityTracker
             </span>
           </Link>
@@ -53,13 +54,13 @@ const Navbar = () => {
               <ThemeToggle />
               <button
                 onClick={logout}
-                className="px-4 py-2 rounded-md text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors"
+                className="btn-primary text-sm px-4 py-2 rounded-lg"
               >
                 Logout
               </button>
             </div>
             <button
-              className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
+              className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--card)] focus:outline-none"
               onClick={() => setIsMobileMenuOpen(prev => !prev)}
               aria-label="Toggle navigation"
             >
@@ -80,12 +81,12 @@ const Navbar = () => {
           </div>
         </div>
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4">
+          <div className="md:hidden border-t border-[var(--border)] py-4">
             <div className="flex flex-col space-y-2">
               <NavLinks onLinkClick={() => setIsMobileMenuOpen(false)} />
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-3 sm:space-y-0 pt-3">
                 <div className="flex items-center justify-between sm:justify-start">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300 mr-3">Theme</span>
+                  <span className="text-sm font-medium theme-text-secondary mr-3">Theme</span>
                   <ThemeToggle />
                 </div>
                 <button
@@ -93,7 +94,7 @@ const Navbar = () => {
                     setIsMobileMenuOpen(false);
                     logout();
                   }}
-                  className="w-full sm:w-auto px-4 py-2 rounded-md text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors"
+                  className="w-full sm:w-auto btn-primary text-sm px-4 py-2"
                 >
                   Logout
                 </button>

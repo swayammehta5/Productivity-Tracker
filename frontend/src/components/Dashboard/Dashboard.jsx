@@ -106,7 +106,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
+        <div className="text-xl theme-text-secondary">Loading...</div>
       </div>
     );
   }
@@ -119,12 +119,12 @@ const Dashboard = () => {
   // Removed unused completedTasks variable
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="app-page">
       <div className="mb-8 space-y-2 text-center sm:text-left">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-3xl theme-heading">
           Welcome back, {user?.name}! 👋
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 text-base sm:text-lg">
+        <p className="theme-text-secondary text-base sm:text-lg">
           Let's make today count. Track your habits and tasks to boost productivity.
         </p>
       </div>
@@ -132,10 +132,10 @@ const Dashboard = () => {
       {/* Stats Summary */}
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="app-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Habits</p>
+                <p className="text-sm theme-text-secondary mb-1">Total Habits</p>
                 <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                   {stats.habits.total}
                 </p>
@@ -144,10 +144,10 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="app-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Tasks</p>
+                <p className="text-sm theme-text-secondary mb-1">Total Tasks</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                   {stats.tasks.total}
                 </p>
@@ -156,10 +156,10 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="app-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Completed Tasks</p>
+                <p className="text-sm theme-text-secondary mb-1">Completed Tasks</p>
                 <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                   {stats.tasks.completed}
                 </p>
@@ -168,10 +168,10 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <div className="app-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pending Tasks</p>
+                <p className="text-sm theme-text-secondary mb-1">Pending Tasks</p>
                 <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                   {stats.tasks.pending}
                 </p>
@@ -186,20 +186,20 @@ const Dashboard = () => {
 
       {/* Overdue Tasks Alert */}
       {overdueTasks.length > 0 && (
-        <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 rounded-lg p-4">
+          <div className="mb-6 app-card border-l-4 border-l-red-500 p-4">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div className="text-3xl md:text-2xl">⚠️</div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-1">
+              <h3 className="text-lg font-semibold text-red-500 mb-1">
                 {overdueTasks.length} Overdue Task{overdueTasks.length > 1 ? 's' : ''}
               </h3>
-              <p className="text-sm text-red-700 dark:text-red-400">
+              <p className="text-sm text-red-400">
                 You have {overdueTasks.length} task{overdueTasks.length > 1 ? 's' : ''} that {overdueTasks.length > 1 ? 'are' : 'is'} past due date.
               </p>
             </div>
             <Link
               to="/tasks"
-              className="mt-2 md:mt-0 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition duration-200 text-center"
+              className="mt-2 md:mt-0 btn-primary text-center"
             >
               View Tasks
             </Link>
@@ -210,21 +210,21 @@ const Dashboard = () => {
       {/* Today's Habits */}
       <div className="mt-8 mb-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Today's Habits</h2>
+          <h2 className="text-2xl theme-heading">Today's Habits</h2>
           <Link
             to="/add-habit"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200 text-center"
+            className="btn-primary text-center"
           >
             + Add Habit
           </Link>
         </div>
 
         {todayHabits.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">No habits yet. Start building your routine!</p>
+          <div className="text-center py-12 app-card">
+            <p className="theme-text-secondary mb-4">No habits yet. Start building your routine!</p>
             <Link
               to="/add-habit"
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200"
+              className="btn-primary"
             >
               Create Your First Habit
             </Link>
@@ -245,38 +245,38 @@ const Dashboard = () => {
       {/* Upcoming Tasks */}
       <div className="mt-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Upcoming Tasks</h2>
+          <h2 className="text-2xl theme-heading">Upcoming Tasks</h2>
           <Link
             to="/tasks"
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200 text-center"
+            className="btn-primary text-center"
           >
             View All Tasks
           </Link>
         </div>
 
         {upcomingTasks.length === 0 && pendingTasks === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow">
-            <p className="text-gray-500 dark:text-gray-400 mb-4">No tasks yet. Start organizing your work!</p>
+          <div className="text-center py-12 app-card">
+            <p className="theme-text-secondary mb-4">No tasks yet. Start organizing your work!</p>
             <Link
               to="/tasks"
-              className="inline-block px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition duration-200"
+              className="btn-primary"
             >
               Create Your First Task
             </Link>
           </div>
         ) : upcomingTasks.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow">
-            <p className="text-gray-500 dark:text-gray-400">No upcoming tasks in the next 7 days.</p>
+          <div className="text-center py-12 app-card">
+            <p className="theme-text-secondary">No upcoming tasks in the next 7 days.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {upcomingTasks.map(task => (
               <div
                 key={task._id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border-l-4 border-purple-500"
+                className="app-card p-6 border-l-4 border-[var(--primary)]"
               >
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">
                     {task.title}
                   </h3>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -288,16 +288,16 @@ const Dashboard = () => {
                   </span>
                 </div>
                 {task.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                  <p className="text-sm theme-text-secondary mb-3 line-clamp-2">
                     {task.description}
                   </p>
                 )}
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">
+                  <span className="theme-text-secondary">
                     📅 {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </span>
                   {task.category && (
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="theme-text-secondary">
                       🏷️ {task.category}
                     </span>
                   )}

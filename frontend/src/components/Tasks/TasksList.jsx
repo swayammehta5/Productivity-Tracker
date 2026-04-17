@@ -89,40 +89,40 @@ const TasksList = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
+        <div className="text-xl theme-text-secondary">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="app-page">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 text-center md:text-left">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Tasks</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage and track all your tasks</p>
+          <h1 className="text-3xl theme-heading mb-2">Your Tasks</h1>
+          <p className="theme-text-secondary">Manage and track all your tasks</p>
         </div>
         <button
           onClick={() => {
             setTaskToEdit(null);
             setShowAddModal(true);
           }}
-          className="w-full md:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200 shadow-lg"
+          className="w-full md:w-auto btn-primary px-6 py-3"
         >
           + Add New Task
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+      <div className="app-card p-6 mb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium theme-text-secondary mb-2">
               Status
             </label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text-primary)]"
             >
               <option value="all">All ({tasks.length})</option>
               <option value="Pending">Pending ({pendingTasks.length})</option>
@@ -131,13 +131,13 @@ const TasksList = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium theme-text-secondary mb-2">
               Priority
             </label>
             <select
               value={filters.priority}
               onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text-primary)]"
             >
               <option value="all">All</option>
               <option value="High">High</option>
@@ -147,13 +147,13 @@ const TasksList = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium theme-text-secondary mb-2">
               Category
             </label>
             <select
               value={filters.category}
               onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text-primary)]"
             >
               <option value="all">All</option>
               {categories.map(cat => (
@@ -163,13 +163,13 @@ const TasksList = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium theme-text-secondary mb-2">
               Sort By
             </label>
             <select
               value={filters.sortBy}
               onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--text-primary)]"
             >
               <option value="createdAt">Newest First</option>
               <option value="dueDate">Due Date</option>
@@ -180,12 +180,12 @@ const TasksList = () => {
       </div>
 
       {tasks.length === 0 ? (
-        <div className="text-center py-16 px-4 bg-white dark:bg-gray-800 rounded-xl shadow">
+        <div className="text-center py-16 px-4 app-card">
           <div className="text-6xl mb-4">📋</div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             No tasks yet
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="theme-text-secondary mb-6">
             Start organizing your tasks and boost your productivity!
           </p>
           <button
@@ -193,7 +193,7 @@ const TasksList = () => {
               setTaskToEdit(null);
               setShowAddModal(true);
             }}
-            className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200"
+            className="btn-primary"
           >
             Create Your First Task
           </button>

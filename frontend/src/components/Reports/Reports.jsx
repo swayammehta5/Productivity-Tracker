@@ -60,7 +60,7 @@ const Reports = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading reports...</div>
+        <div className="text-xl theme-text-secondary">Loading reports...</div>
       </div>
     );
   }
@@ -68,9 +68,9 @@ const Reports = () => {
   const data = period === 'weekly' ? weeklyData : monthlyData;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="app-page">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 className="text-3xl theme-heading mb-4">
           📊 Productivity Reports
         </h1>
         <div className="flex flex-wrap gap-3">
@@ -78,8 +78,8 @@ const Reports = () => {
             onClick={() => setPeriod('weekly')}
             className={`px-4 py-2 rounded-lg font-medium ${
               period === 'weekly'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ? 'btn-primary text-white'
+                : 'btn-outline'
             }`}
           >
             Weekly
@@ -88,8 +88,8 @@ const Reports = () => {
             onClick={() => setPeriod('monthly')}
             className={`px-4 py-2 rounded-lg font-medium ${
               period === 'monthly'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ? 'btn-primary text-white'
+                : 'btn-outline'
             }`}
           >
             Monthly
@@ -101,26 +101,26 @@ const Reports = () => {
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Consistency Score</p>
+            <div className="app-card p-6">
+              <p className="text-sm theme-text-secondary mb-1">Consistency Score</p>
               <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                 {data.consistencyScore?.toFixed(1) || 0}%
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Habit Completion Rate</p>
+            <div className="app-card p-6">
+              <p className="text-sm theme-text-secondary mb-1">Habit Completion Rate</p>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {data.habits?.completionRate?.toFixed(1) || 0}%
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Task Completion Rate</p>
+            <div className="app-card p-6">
+              <p className="text-sm theme-text-secondary mb-1">Task Completion Rate</p>
               <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                 {data.tasks?.completionRate?.toFixed(1) || 0}%
               </p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Average Streak</p>
+            <div className="app-card p-6">
+              <p className="text-sm theme-text-secondary mb-1">Average Streak</p>
               <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
                 {data.habits?.averageStreak || 0}
               </p>
@@ -131,8 +131,8 @@ const Reports = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Daily Habit Completions */}
             {data.habits?.dailyCompletions && (
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="app-card p-6">
+                <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                   Daily Habit Completions
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -150,8 +150,8 @@ const Reports = () => {
             )}
 
             {/* Task Completion */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <div className="app-card p-6">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
                 Task Statistics
               </h3>
               <ResponsiveContainer width="100%" height={300}>

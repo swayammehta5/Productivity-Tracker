@@ -77,7 +77,7 @@ const HabitsList = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl text-gray-600 dark:text-gray-400">Loading...</div>
+        <div className="text-xl theme-text-secondary">Loading...</div>
       </div>
     );
   }
@@ -85,29 +85,29 @@ const HabitsList = () => {
   const filteredHabits = getFilteredHabits();
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="app-page">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Your Habits</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage and track all your habits</p>
+          <h1 className="text-3xl theme-heading mb-2">Your Habits</h1>
+          <p className="theme-text-secondary">Manage and track all your habits</p>
         </div>
         <button
           onClick={() => {
             setHabitToEdit(null);
             setShowAddModal(true);
           }}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200 shadow-lg"
+          className="btn-primary px-6 py-3"
         >
           + Add New Habit
         </button>
       </div>
-      <div className="mb-6 flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+      <div className="mb-6 flex flex-wrap gap-2 border-b border-[var(--border)] pb-2">
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 font-medium transition ${
             filter === 'all'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'text-[var(--primary)] border-b-2 border-[var(--primary)]'
+              : 'theme-text-secondary hover:text-[var(--text-primary)]'
           }`}
         >
           All ({habits.length})
@@ -116,8 +116,8 @@ const HabitsList = () => {
           onClick={() => setFilter('active')}
           className={`px-4 py-2 font-medium transition ${
             filter === 'active'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'text-[var(--primary)] border-b-2 border-[var(--primary)]'
+              : 'theme-text-secondary hover:text-[var(--text-primary)]'
           }`}
         >
           Active ({habits.filter(h => h.currentStreak > 0).length})
@@ -126,8 +126,8 @@ const HabitsList = () => {
           onClick={() => setFilter('archived')}
           className={`px-4 py-2 font-medium transition ${
             filter === 'archived'
-              ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'text-[var(--primary)] border-b-2 border-[var(--primary)]'
+              : 'theme-text-secondary hover:text-[var(--text-primary)]'
           }`}
         >
           Inactive ({habits.filter(h => h.currentStreak === 0).length})
@@ -135,12 +135,12 @@ const HabitsList = () => {
       </div>
 
       {filteredHabits.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow">
+        <div className="text-center py-16 app-card">
           <div className="text-6xl mb-4">🎯</div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">
             {filter === 'all' ? 'No habits yet' : `No ${filter} habits`}
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="theme-text-secondary mb-6">
             {filter === 'all' 
               ? 'Start building better habits today!' 
               : `You don't have any ${filter} habits at the moment.`}
@@ -151,7 +151,7 @@ const HabitsList = () => {
                 setHabitToEdit(null);
                 setShowAddModal(true);
               }}
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition duration-200"
+              className="btn-primary"
             >
               Create Your First Habit
             </button>
@@ -162,7 +162,7 @@ const HabitsList = () => {
           {filteredHabits.map(habit => (
             <div
               key={habit._id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl"
+              className="app-card overflow-hidden transition-all hover:shadow-xl"
             >
               <div className="h-2" style={{ backgroundColor: habit.color }} />
               
@@ -170,25 +170,25 @@ const HabitsList = () => {
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <Link to={`/habits/${habit._id}`}>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                      <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2 hover:text-[var(--primary)] transition">
                         {habit.name}
                       </h3>
                     </Link>
                     {habit.description && (
-                      <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      <p className="theme-text-secondary mb-4">
                         {habit.description}
                       </p>
                     )}
                     
                     <div className="flex flex-wrap gap-4 mb-4">
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-500 dark:text-gray-400">Frequency:</span>
+                        <span className="theme-text-secondary">Frequency:</span>
                         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium capitalize">
                           {habit.frequency}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className="text-gray-500 dark:text-gray-400">Goal:</span>
+                        <span className="theme-text-secondary">Goal:</span>
                         <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium">
                           {habit.goal} {habit.goal === 1 ? 'time' : 'times'} per day
                         </span>
@@ -200,19 +200,19 @@ const HabitsList = () => {
                         <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                           {habit.currentStreak}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Current Streak</div>
+                        <div className="text-sm theme-text-secondary">Current Streak</div>
                       </div>
                       <div>
                         <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                           {habit.longestStreak}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Longest Streak</div>
+                        <div className="text-sm theme-text-secondary">Longest Streak</div>
                       </div>
                       <div>
                         <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                           {habit.completions.filter(c => c.completed).length}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">Total Completions</div>
+                        <div className="text-sm theme-text-secondary">Total Completions</div>
                       </div>
                     </div>
                   </div>
@@ -220,7 +220,7 @@ const HabitsList = () => {
                   <div className="flex flex-col space-y-2 ml-4">
                     <button
                       onClick={() => handleEditClick(habit)}
-                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition duration-200"
+                      className="btn-primary px-4 py-2 text-sm"
                     >
                       Edit
                     </button>
@@ -235,8 +235,8 @@ const HabitsList = () => {
               </div>
 
               {deleteConfirm === habit._id && (
-                <div className="bg-red-50 dark:bg-red-900/20 border-t border-red-200 dark:border-red-800 p-4">
-                  <p className="text-red-700 dark:text-red-300 mb-3">
+                <div className="bg-[color-mix(in_srgb,var(--card)_65%,#ef4444_35%)] border-t border-red-400 p-4">
+                  <p className="text-red-200 mb-3">
                     Are you sure you want to delete "{habit.name}"? This action cannot be undone.
                   </p>
                   <div className="flex space-x-3">
@@ -248,7 +248,7 @@ const HabitsList = () => {
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(null)}
-                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium transition duration-200"
+                      className="px-4 py-2 btn-outline text-sm"
                     >
                       Cancel
                     </button>
