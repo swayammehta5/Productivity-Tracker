@@ -5,6 +5,23 @@ const UserScore = require('../models/UserScore');
 
 const router = express.Router();
 
+const normalizeDate = (value) => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const parsed = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+  parsed.setUTCHours(0, 0, 0, 0);
+  return parsed;
+};
+
+const getTodayUTCDate = () => {
+  const now = new Date();
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+};
+
 router.get('/', auth, async (req, res) => {
   try {
     const habits = await Habit.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -87,12 +104,17 @@ router.post('/:id/complete', auth, async (req, res) => {
       return res.status(404).json({ message: 'Habit not found' });
     }
 
-    const completionDate = new Date(date);
-    completionDate.setHours(0, 0, 0, 0);
+    const completionDate = normalizeDate(date);
+    const today = normalizeDate(getTodayUTCDate());
+
+    // Enforce server-side protection: users can only update today's completion.
+    if (!completionDate || completionDate.getTime() !== today.getTime()) {
+      return res.status(400).json({ message: "Only today's habit can be updated" });
+    }
 
     const existingCompletion = habit.completions.find(c => {
       const d = new Date(c.date);
-      d.setHours(0, 0, 0, 0);
+      d.setUTCHours(0, 0, 0, 0);
       return d.getTime() === completionDate.getTime();
     });
 
@@ -138,12 +160,17 @@ router.post('/:id/uncomplete', auth, async (req, res) => {
       return res.status(404).json({ message: 'Habit not found' });
     }
 
-    const completionDate = new Date(date);
-    completionDate.setHours(0, 0, 0, 0);
+    const completionDate = normalizeDate(date);
+    const today = normalizeDate(getTodayUTCDate());
+
+    // Enforce server-side protection: users can only update today's completion.
+    if (!completionDate || completionDate.getTime() !== today.getTime()) {
+      return res.status(400).json({ message: "Only today's habit can be updated" });
+    }
 
     habit.completions = habit.completions.filter(c => {
       const d = new Date(c.date);
-      d.setHours(0, 0, 0, 0);
+      d.setUTCHours(0, 0, 0, 0);
       return d.getTime() !== completionDate.getTime();
     });
 

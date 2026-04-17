@@ -42,16 +42,19 @@ const CalendarView = () => {
     };
   };
 
+  const toUTCDateString = (value) => {
+    const date = new Date(value);
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+      .toISOString()
+      .split('T')[0];
+  };
+
   const isHabitCompleted = (date) => {
     if (!selectedHabit) return false;
-
-    const checkDate = new Date(date);
-    checkDate.setHours(0, 0, 0, 0);
+    const checkDateKey = toUTCDateString(date);
 
     return selectedHabit.completions.some(c => {
-      const completionDate = new Date(c.date);
-      completionDate.setHours(0, 0, 0, 0);
-      return c.completed && completionDate.getTime() === checkDate.getTime();
+      return c.completed && toUTCDateString(c.date) === checkDateKey;
     });
   };
 
@@ -69,13 +72,21 @@ const CalendarView = () => {
 
   const handleToggleDay = async (date) => {
     if (!selectedHabit) return;
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Hard guard on client: do not allow toggles for non-today dates.
+    if (selectedDate.getTime() !== today.getTime()) return;
 
     try {
-      const isCompleted = isHabitCompleted(date);
+      const isCompleted = isHabitCompleted(selectedDate);
+      const completionDate = toUTCDateString(selectedDate);
       if (isCompleted) {
-        await habitsAPI.uncomplete(selectedHabit._id, date.toISOString());
+        await habitsAPI.uncomplete(selectedHabit._id, completionDate);
       } else {
-        await habitsAPI.complete(selectedHabit._id, date.toISOString());
+        await habitsAPI.complete(selectedHabit._id, completionDate);
       }
       loadData();
     } catch (error) {
@@ -108,8 +119,7 @@ const CalendarView = () => {
       date.setHours(0, 0, 0, 0);
 
       const isToday = date.getTime() === today.getTime();
-      const isPast = date < today;
-      const isFuture = date > today;
+      const isDisabled = !isToday;
 
       if (viewMode === 'habits') {
         const isCompleted = isHabitCompleted(date);
@@ -117,17 +127,15 @@ const CalendarView = () => {
         days.push(
           <button
             key={day}
-            onClick={() => isToday && handleToggleDay(date)}
-            disabled={!isToday}
+            onClick={() => handleToggleDay(date)}
+            disabled={isDisabled}
             className={`aspect-square flex items-center justify-center rounded-lg font-medium transition-all ${
               isToday ? 'ring-2 ring-blue-500' : ''
             } ${
               isCompleted
                 ? 'bg-green-500 text-white hover:bg-green-600'
-                : isPast
+                : isDisabled
                 ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                : isFuture
-                ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-200 dark:bg-gray-700'
             }`}
           >

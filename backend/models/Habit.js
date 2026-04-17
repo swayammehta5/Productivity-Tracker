@@ -77,14 +77,14 @@ habitSchema.methods.calculateStreak = function() {
 
   let streak = 0;
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  today.setUTCHours(0, 0, 0, 0);
 
   for (let i = 0; i < sortedCompletions.length; i++) {
     const completionDate = new Date(sortedCompletions[i].date);
-    completionDate.setHours(0, 0, 0, 0);
+    completionDate.setUTCHours(0, 0, 0, 0);
     
     const expectedDate = new Date(today);
-    expectedDate.setDate(today.getDate() - i);
+    expectedDate.setUTCDate(today.getUTCDate() - i);
     
     if (completionDate.getTime() === expectedDate.getTime()) {
       streak++;

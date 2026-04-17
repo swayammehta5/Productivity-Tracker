@@ -33,9 +33,16 @@ const Dashboard = () => {
     }
   };
 
+  const getUTCDateString = (value = new Date()) => {
+    const date = new Date(value);
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+      .toISOString()
+      .split('T')[0];
+  };
+
   const handleToggleHabit = async (habitId, completed) => {
     try {
-      const today = new Date().toISOString();
+      const today = getUTCDateString();
       if (completed) {
         await habitsAPI.complete(habitId, today);
       } else {
