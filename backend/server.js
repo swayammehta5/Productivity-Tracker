@@ -23,6 +23,7 @@ const taskRoutes = require('./routes/tasks');
 const reportsRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
 const leaderboardRoutes = require('./routes/leaderboard');
+const aiRoutes = require('./routes/ai');
 
 // Import middleware
 const auth = require('./middleware/auth');
@@ -58,6 +59,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/ai', auth, aiRoutes);
 
 // Health check (works even if MongoDB is not connected)
 app.get('/api/health', (req, res) => {

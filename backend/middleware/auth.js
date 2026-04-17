@@ -3,7 +3,14 @@ const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (req.user) {
+      return next();
+    }
+
+    const authorizationHeader = req.header('Authorization') || '';
+    const bearerToken = authorizationHeader.replace(/^Bearer\s+/i, '').trim();
+    const headerToken = req.header('x-auth-token')?.trim();
+    const token = bearerToken || headerToken;
     
     if (!token) {
       return res.status(401).json({ message: 'No authentication token, access denied' });

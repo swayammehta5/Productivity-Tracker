@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
 import Navbar from './components/Layout/Navbar';
+import AIAssistantFab from './components/AI/AIAssistantFab';
 
 // ✅ Lazy Loading (Performance Boost) Component loads ONLY when needed This is called on-demand loading
 const GoogleLogin = lazy(() => import('./components/Auth/GoogleLogin'));
@@ -19,6 +20,9 @@ const Profile = lazy(() => import('./components/Profile/Profile'));
 const Reports = lazy(() => import('./components/Reports/Reports'));
 const Leaderboard = lazy(() => import('./components/Leaderboard/Leaderboard'));
 const GamificationDashboard = lazy(() => import('./components/Gamification/GamificationDashboard'));
+const AIHabitCoach = lazy(() => import('./components/AI/AIHabitCoach'));
+const AITaskPrioritizer = lazy(() => import('./components/AI/AITaskPrioritizer'));
+const AIWeeklyInsights = lazy(() => import('./components/AI/AIWeeklyInsights'));
 
 
 // ✅ Clean PrivateRoute
@@ -69,12 +73,16 @@ function AppContent() {
         <Route path="/reports" element={<PrivateRoute user={user} initializing={initializing}><Reports /></PrivateRoute>} />
         <Route path="/leaderboard" element={<PrivateRoute user={user} initializing={initializing}><Leaderboard /></PrivateRoute>} />
         <Route path="/gamification" element={<PrivateRoute user={user} initializing={initializing}><GamificationDashboard /></PrivateRoute>} />
+        <Route path="/ai/habit-coach" element={<PrivateRoute user={user} initializing={initializing}><AIHabitCoach /></PrivateRoute>} />
+        <Route path="/ai/task-prioritizer" element={<PrivateRoute user={user} initializing={initializing}><AITaskPrioritizer /></PrivateRoute>} />
+        <Route path="/ai/weekly-insights" element={<PrivateRoute user={user} initializing={initializing}><AIWeeklyInsights /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute user={user} initializing={initializing}><Profile /></PrivateRoute>} />
 
         {/* ✅ 404 Page */}
         <Route path="*" element={<div className="text-center mt-10 text-xl">404 - Page Not Found</div>} />
 
       </Routes>
+      {user && <AIAssistantFab />}
     </div>
   );
 }

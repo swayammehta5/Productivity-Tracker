@@ -111,6 +111,14 @@ export const reportsAPI = {
   getMonthly: () => api.get('/reports/monthly')
 };
 
+// ✅ AI Assistant
+export const aiAPI = {
+  getHabitCoach: () => api.get('/ai/habit-coach'),
+  getTaskPrioritization: () => api.get('/ai/task-prioritize'),
+  getWeeklyInsights: () => api.get('/ai/weekly-insights'),
+  askAssistant: (question) => api.post('/ai/assistant', { question })
+};
+
 // ✅ Leaderboard
 export const leaderboardAPI = {
   getLeaderboard: (params) => api.get('/leaderboard', { params }),

@@ -18,10 +18,31 @@ const Navbar = () => {
     { path: '/gamification', label: 'Gamification' },
     { path: '/profile', label: 'Profile' }
   ];
+  const aiLinks = [
+    { path: '/ai/habit-coach', label: 'AI Habit Coach' },
+    { path: '/ai/task-prioritizer', label: 'AI Task Prioritizer' },
+    { path: '/ai/weekly-insights', label: 'AI Weekly Insights' }
+  ];
 
   const NavLinks = ({ onLinkClick }) => (
     <>
       {navLinks.map(link => (
+        <Link
+          key={link.path}
+          to={link.path}
+          onClick={() => onLinkClick?.()}
+          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+            location.pathname === link.path
+              ? 'text-white shadow-md'
+              : 'theme-text-secondary hover:text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,var(--card)_70%,var(--primary)_30%)]'
+          }`}
+          style={location.pathname === link.path ? { backgroundImage: 'linear-gradient(to right, var(--primary), var(--secondary))' } : undefined}
+        >
+          {link.label}
+        </Link>
+      ))}
+      <span className="hidden lg:inline text-xs uppercase tracking-wider theme-text-secondary ml-2 mr-1">AI Assistant</span>
+      {aiLinks.map(link => (
         <Link
           key={link.path}
           to={link.path}
@@ -85,6 +106,7 @@ const Navbar = () => {
             <div className="flex flex-col space-y-2">
               <NavLinks onLinkClick={() => setIsMobileMenuOpen(false)} />
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-3 sm:space-y-0 pt-3">
+                <p className="text-xs uppercase tracking-wider theme-text-secondary">AI Assistant: Habit Coach, Task Prioritizer, Weekly Insights</p>
                 <div className="flex items-center justify-between sm:justify-start">
                   <span className="text-sm font-medium theme-text-secondary mr-3">Theme</span>
                   <ThemeToggle />
