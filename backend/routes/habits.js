@@ -97,7 +97,7 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.post('/:id/complete', auth, async (req, res) => {
   try {
-    const { date } = req.body;
+    const { date, notes, progress } = req.body;
     const habit = await Habit.findOne({ _id: req.params.id, user: req.user._id });
     
     if (!habit) {
@@ -120,8 +120,21 @@ router.post('/:id/complete', auth, async (req, res) => {
 
     if (existingCompletion) {
       existingCompletion.completed = true;
+      existingCompletion.completedAt = new Date();
+      existingCompletion.notes = typeof notes === 'string' ? notes : existingCompletion.notes;
+      existingCompletion.progress = Number.isFinite(Number(progress))
+        ? Math.min(100, Math.max(0, Number(progress)))
+        : 100;
     } else {
-      habit.completions.push({ date: completionDate, completed: true });
+      habit.completions.push({
+        date: completionDate,
+        completed: true,
+        completedAt: new Date(),
+        notes: typeof notes === 'string' ? notes : '',
+        progress: Number.isFinite(Number(progress))
+          ? Math.min(100, Math.max(0, Number(progress)))
+          : 100
+      });
     }
 
     habit.calculateStreak();

@@ -20,6 +20,7 @@ const { sendReminderEmail } = require('./utils/emailService');
 const authRoutes = require('./routes/auth');
 const habitRoutes = require('./routes/habits');
 const taskRoutes = require('./routes/tasks');
+const calendarRoutes = require('./routes/calendar');
 const reportsRoutes = require('./routes/reports');
 const gamificationRoutes = require('./routes/gamification');
 const leaderboardRoutes = require('./routes/leaderboard');
@@ -56,6 +57,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/calendar', calendarRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);

@@ -1,12 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { habitsAPI, tasksAPI } from '../../services/api';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { habitsAPI, tasksAPI, calendarAPI } from '../../services/api';
+import CalendarDay from './CalendarDay';
+import DayDetailsModal from './DayDetailsModal';
 
 const CalendarView = () => {
+  const navigate = useNavigate();
+  const [habits, setHabits] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [selectedHabit, setSelectedHabit] = useState(null);
-  const viewMode = 'habits';
+  const [viewMode, setViewMode] = useState('habits');
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDateDetails, setSelectedDateDetails] = useState(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const dayDetailsCache = useRef({});
 
   useEffect(() => {
     loadData();
@@ -18,6 +27,7 @@ const CalendarView = () => {
         habitsAPI.getAll(),
         tasksAPI.getAll({ sortBy: 'dueDate' })
       ]);
+      setHabits(habitsRes.data);
       setTasks(tasksRes.data);
       if (habitsRes.data.length > 0) {
         setSelectedHabit(habitsRes.data[0]);
@@ -68,27 +78,75 @@ const CalendarView = () => {
     });
   };
 
-  const handleToggleDay = async (date) => {
-    if (!selectedHabit) return;
-    const selectedDate = new Date(date);
-    selectedDate.setHours(0, 0, 0, 0);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const fetchDayDetails = async (date) => {
+    const dateKey = toUTCDateString(date);
+    const cacheKey = `${viewMode}-${dateKey}-${selectedHabit?._id || 'none'}`;
 
-    // Hard guard on client: do not allow toggles for non-today dates.
-    if (selectedDate.getTime() !== today.getTime()) return;
+    if (dayDetailsCache.current[cacheKey]) {
+      return dayDetailsCache.current[cacheKey];
+    }
+
+    const response = await calendarAPI.getDayDetails({
+      date: dateKey,
+      type: viewMode === 'habits' ? 'habit' : 'task',
+      habitId: selectedHabit?._id
+    });
+    dayDetailsCache.current[cacheKey] = response.data;
+    return response.data;
+  };
+
+  const handleDayClick = async (date) => {
+    try {
+      const details = await fetchDayDetails(date);
+      setSelectedDate(toUTCDateString(date));
+      setSelectedDateDetails(details);
+      setIsDetailsOpen(true);
+    } catch (error) {
+      console.error('Failed to load day details:', error);
+    }
+  };
+
+  const clearCache = () => {
+    dayDetailsCache.current = {};
+  };
+
+  const handleToggleHabitFromModal = async () => {
+    if (!selectedHabit || !selectedDateDetails?.habit) return;
 
     try {
-      const isCompleted = isHabitCompleted(selectedDate);
-      const completionDate = toUTCDateString(selectedDate);
-      if (isCompleted) {
-        await habitsAPI.uncomplete(selectedHabit._id, completionDate);
+      if (selectedDateDetails.habit.completed) {
+        await habitsAPI.uncomplete(selectedHabit._id, selectedDate);
       } else {
-        await habitsAPI.complete(selectedHabit._id, completionDate);
+        await habitsAPI.complete(selectedHabit._id, selectedDate);
       }
-      loadData();
+      clearCache();
+      await loadData();
+      const refreshed = await fetchDayDetails(new Date(selectedDate));
+      setSelectedDateDetails(refreshed);
     } catch (error) {
-      console.error('Failed to toggle habit:', error);
+      console.error('Failed to toggle habit from modal:', error);
+    }
+  };
+
+  const handleToggleTaskStatusFromModal = async (task) => {
+    try {
+      await tasksAPI.update(task.id, {
+        status: task.status === 'Completed' ? 'Pending' : 'Completed'
+      });
+      clearCache();
+      await loadData();
+      const refreshed = await fetchDayDetails(new Date(selectedDate));
+      setSelectedDateDetails(refreshed);
+    } catch (error) {
+      console.error('Failed to toggle task status:', error);
+    }
+  };
+
+  const handleEdit = (type) => {
+    if (type === 'habit') {
+      navigate('/habits');
+    } else {
+      navigate('/tasks');
     }
   };
 
@@ -100,12 +158,53 @@ const CalendarView = () => {
     });
   };
 
+  const getTaskSummaryForDate = (date) => {
+    const dayTasks = getTasksForDate(date);
+    const completedTasks = dayTasks.filter((task) => task.status === 'Completed').length;
+    const pendingTasks = dayTasks.filter((task) => task.status === 'Pending').length;
+    const totalTasks = dayTasks.length;
+
+    return {
+      completedTasks,
+      pendingTasks,
+      totalTasks,
+      completionRate: totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0
+    };
+  };
+
+  const getHabitSummaryForDate = (date) => {
+    const isCompleted = isHabitCompleted(date);
+    const dateKey = toUTCDateString(date);
+    const todayKey = toUTCDateString(new Date());
+
+    return {
+      habitStatus: isCompleted ? 'Completed' : dateKey <= todayKey ? 'Missed' : 'No Data'
+    };
+  };
+
+  const getDayColorClass = (date) => {
+    if (viewMode === 'habits') {
+      const summary = getHabitSummaryForDate(date);
+      if (summary.habitStatus === 'Completed') return 'bg-green-500 text-white hover:bg-green-600';
+      if (summary.habitStatus === 'Missed') return 'bg-red-100 text-red-700 dark:bg-red-900/30';
+      return 'bg-gray-200 dark:bg-gray-700';
+    }
+
+    const summary = getTaskSummaryForDate(date);
+    if (summary.totalTasks === 0) return 'bg-gray-100 dark:bg-gray-800';
+    if (summary.pendingTasks > 0 && summary.completedTasks > 0) return 'bg-yellow-100 dark:bg-yellow-900/30';
+    if (summary.pendingTasks > 0) return 'bg-red-100 dark:bg-red-900/30';
+    return 'bg-green-100 dark:bg-green-900/30';
+  };
+
+  const canToggleHabitInModal = useMemo(() => {
+    if (!selectedDate) return false;
+    return selectedDate === toUTCDateString(new Date());
+  }, [selectedDate]);
+
   const renderCalendar = () => {
     const { daysInMonth, startingDayOfWeek } = getDaysInMonth(currentMonth);
     const days = [];
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     // Empty slots
     for (let i = 0; i < startingDayOfWeek; i++) {
@@ -115,70 +214,19 @@ const CalendarView = () => {
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
       date.setHours(0, 0, 0, 0);
+      const summary = viewMode === 'habits' ? getHabitSummaryForDate(date) : getTaskSummaryForDate(date);
 
-      const isToday = date.getTime() === today.getTime();
-      const isDisabled = !isToday;
-
-      if (viewMode === 'habits') {
-        const isCompleted = isHabitCompleted(date);
-
-        days.push(
-          <button
-            key={day}
-            onClick={() => handleToggleDay(date)}
-            disabled={isDisabled}
-            className={`aspect-square flex items-center justify-center rounded-lg font-medium transition-all ${
-              isToday ? 'ring-2 ring-blue-500' : ''
-            } ${
-              isCompleted
-                ? 'bg-green-500 text-white hover:bg-green-600'
-                : isDisabled
-                ? 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-200 dark:bg-gray-700'
-            }`}
-          >
-            {day}
-          </button>
-        );
-      } else {
-        const dayTasks = getTasksForDate(date);
-        const completedTasks = dayTasks.filter(t => t.status === 'Completed').length;
-        const pendingTasks = dayTasks.filter(t => t.status === 'Pending').length;
-        const hasHighPriority = dayTasks.some(t => t.priority === 'High' && t.status === 'Pending');
-
-        days.push(
-          <div
-            key={day}
-            className={`aspect-square flex flex-col items-center justify-center rounded-lg font-medium p-1 ${
-              isToday ? 'ring-2 ring-purple-500' : ''
-            } ${
-              hasHighPriority
-                ? 'bg-red-100 dark:bg-red-900/30 border-2 border-red-500'
-                : pendingTasks > 0
-                ? 'bg-yellow-100 dark:bg-yellow-900/30'
-                : completedTasks > 0
-                ? 'bg-green-100 dark:bg-green-900/30'
-                : 'bg-gray-100 dark:bg-gray-800'
-            }`}
-          >
-            <span className="text-sm font-semibold">{day}</span>
-            {dayTasks.length > 0 && (
-              <div className="flex gap-1 mt-1">
-                {pendingTasks > 0 && (
-                  <span className="text-xs bg-yellow-500 text-white rounded-full px-1">
-                    {pendingTasks}
-                  </span>
-                )}
-                {completedTasks > 0 && (
-                  <span className="text-xs bg-green-500 text-white rounded-full px-1">
-                    {completedTasks}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      }
+      days.push(
+        <CalendarDay
+          key={day}
+          day={day}
+          isToday={toUTCDateString(date) === toUTCDateString(new Date())}
+          colorClass={getDayColorClass(date)}
+          summary={summary}
+          viewMode={viewMode}
+          onClick={() => handleDayClick(date)}
+        />
+      );
     }
 
     return days;
@@ -191,6 +239,43 @@ const CalendarView = () => {
   return (
     <div className="app-page">
       <h1 className="text-3xl theme-heading mb-4">Calendar View</h1>
+
+      <div className="app-card mb-4 flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className={`px-3 py-2 rounded ${viewMode === 'habits' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setViewMode('habits')}
+          >
+            Habits
+          </button>
+          <button
+            type="button"
+            className={`px-3 py-2 rounded ${viewMode === 'tasks' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setViewMode('tasks')}
+          >
+            Tasks
+          </button>
+        </div>
+
+        {viewMode === 'habits' && (
+          <select
+            className="rounded border border-gray-300 bg-white px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            value={selectedHabit?._id || ''}
+            onChange={(event) => {
+              const habit = habits.find((item) => item._id === event.target.value);
+              setSelectedHabit(habit || null);
+              clearCache();
+            }}
+          >
+            {habits.map((habit) => (
+              <option key={habit._id} value={habit._id}>
+                {habit.name}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
 
       <div className="app-card p-4 mb-4">
         <div className="flex justify-between items-center">
@@ -209,6 +294,28 @@ const CalendarView = () => {
       <div className="grid grid-cols-7 gap-2 app-card p-3">
         {renderCalendar()}
       </div>
+
+      <div className="app-card mt-4 p-3">
+        <p className="mb-2 text-sm font-semibold theme-text-primary">Legend</p>
+        <div className="flex flex-wrap gap-3 text-xs theme-text-secondary">
+          <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-green-500" />Completed</span>
+          <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-red-400" />Missed</span>
+          <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-yellow-400" />Partial</span>
+          <span className="flex items-center gap-1"><span className="h-3 w-3 rounded bg-gray-400" />No data</span>
+        </div>
+      </div>
+
+      <DayDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        details={selectedDateDetails}
+        viewMode={viewMode}
+        selectedDate={selectedDate}
+        canToggleHabit={canToggleHabitInModal}
+        onToggleHabit={handleToggleHabitFromModal}
+        onToggleTask={handleToggleTaskStatusFromModal}
+        onEdit={handleEdit}
+      />
     </div>
   );
 };

@@ -100,6 +100,11 @@ export const tasksAPI = {
   getStats: () => api.get('/tasks/stats')
 };
 
+// ✅ CALENDAR
+export const calendarAPI = {
+  getDayDetails: (params) => api.get('/calendar/day-details', { params })
+};
+
 // ✅ Stats
 export const statsAPI = {
   getCombined: () => api.get('/stats')

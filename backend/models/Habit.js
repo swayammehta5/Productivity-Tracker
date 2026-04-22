@@ -49,6 +49,20 @@ const habitSchema = new mongoose.Schema({
     completed: {
       type: Boolean,
       default: true
+    },
+    completedAt: {
+      type: Date
+    },
+    notes: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    progress: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 100
     }
   }],
   currentStreak: {
