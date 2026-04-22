@@ -123,13 +123,6 @@ const AIAssistantPanel = ({ initialTab = 'habit', embedded = false, onClose }) =
                 </div>
               </div>
             )}
-
-            <div>
-              <p className="text-sm font-semibold theme-text-primary">Stats</p>
-              <pre className="mt-2 overflow-auto rounded bg-gray-100 p-3 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                {JSON.stringify(data.stats || {}, null, 2)}
-              </pre>
-            </div>
           </div>
         )}
       </div>
